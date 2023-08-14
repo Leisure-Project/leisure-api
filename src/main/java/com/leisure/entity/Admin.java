@@ -11,13 +11,8 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Admin {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "admin_id", unique = true, nullable = false)
-    private Long id;
+@PrimaryKeyJoinColumn(referencedColumnName = "user_id")
+public class Admin extends User{
     @Column(name = "alias", unique = true, nullable = false)
     private String alias;
-    @OneToOne(cascade = CascadeType.ALL)
-    private User user;
 }

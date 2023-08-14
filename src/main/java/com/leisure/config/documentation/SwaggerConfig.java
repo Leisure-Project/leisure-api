@@ -1,4 +1,4 @@
-package com.leisure.config;
+package com.leisure.config.documentation;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
