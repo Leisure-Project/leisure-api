@@ -19,5 +19,4 @@ public class CreateClientResource {
     private Date activatedDate;
     private Date createdDate;
     private String pictureProfile;
-    private Long statusId;
 }

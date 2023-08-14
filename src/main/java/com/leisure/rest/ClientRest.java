@@ -25,9 +25,10 @@ public class ClientRest {
     @Autowired
     private ModelMapper mapping;
 
-    @PostMapping(path = "/saveClient", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<ClientResource> saveClient(@RequestBody CreateClientResource resource) throws Exception {
-        Client client = this.clientService.save(mapping.map(resource, Client.class));
+    @PostMapping(path = "/saveClient/{statusId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<ClientResource> saveClient(@RequestBody CreateClientResource resource,
+                                                     @PathVariable Long statusId) throws Exception {
+        Client client = this.clientService.save(mapping.map(resource, Client.class), statusId);
         ClientResource clientResource = mapping.map(client, ClientResource.class);
         return new ResponseEntity<>(clientResource, HttpStatus.OK);
     }

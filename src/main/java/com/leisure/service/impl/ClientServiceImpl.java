@@ -26,12 +26,14 @@ public class ClientServiceImpl implements ClientService {
     private final String ENTITY = "Cliente";
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Override
-    public Client save(Client client) throws Exception {
-        Optional<Status> status = this.statusRepository.findById(client.getId());
+    public Client save(Client client, Long statusId) throws Exception {
+        logger.error("a" + client);
+        Optional<Status> status = this.statusRepository.findById(statusId);
         if(status.isEmpty()){
-            throw new ResourceNotFoundException("Status", client.getId());
+            throw new ResourceNotFoundException("Status", statusId);
         }
         client.setStatus(status.get());
+        logger.error("n" + client);
         Boolean existsUsername = this.clientRepository.existsByUsername(client.getUsername());
         Boolean existsEmail = this.clientRepository.existsByEmail(client.getEmail());
         if(Boolean.TRUE.equals(existsUsername)){

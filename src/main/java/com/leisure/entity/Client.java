@@ -14,13 +14,13 @@ import java.util.Date;
 @AllArgsConstructor
 @PrimaryKeyJoinColumn(referencedColumnName = "user_id")
 public class Client extends User{
-    @Column(name = "username", unique = true, nullable = false)
+    @Column(name = "username", unique = true)
     private String username;
-    @Column(name = "activated_date", nullable = false)
+    @Column(name = "activated_date")
     private Date activatedDate;
-    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER, targetEntity = Status.class)
+    @ManyToOne(targetEntity = Status.class)
     @JoinColumn(name = "status_id")
     private Status status;
-    @Column(name = "is_active", nullable = false)
+    @Column(name = "is_active")
     private Boolean isActive;
 }
