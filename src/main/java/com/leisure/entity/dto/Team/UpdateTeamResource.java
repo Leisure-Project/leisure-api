@@ -6,7 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UpdateTeamResource {
-    private Long parentId;
-    private Long childId;
     private Boolean isActive;
 }
