@@ -17,5 +17,6 @@ public class ClientResource {
     private Date activatedDate;
     private Date createdDate;
     private String pictureProfile;
+    private Boolean isActive;
     private Status status;
 }

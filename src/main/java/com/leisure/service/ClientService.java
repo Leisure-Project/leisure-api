@@ -5,6 +5,9 @@ import com.leisure.entity.Client;
 import java.util.List;
 
 public interface ClientService {
-    List<Client> getAllClients();
+    Client save(Client client) throws Exception;
+    Client update(Client client, Long clientId) throws Exception;
+    Client getClientById(Long clientId) throws Exception;
+    List<Client> getAllClients() throws Exception;
 
 }

@@ -14,9 +14,10 @@ public class CreateClientResource {
     private String lastname;
     private String dni;
     private String email;
+    private Boolean isActive;
     private String password;
     private Date activatedDate;
     private Date createdDate;
     private String pictureProfile;
-    private Status status;
+    private Long statusId;
 }

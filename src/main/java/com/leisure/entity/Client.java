@@ -18,7 +18,8 @@ public class Client extends User{
     private String username;
     @Column(name = "activated_date", nullable = false)
     private Date activatedDate;
-    @ManyToOne(optional = false, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER, targetEntity = Status.class)
+    @JoinColumn(name = "status_id")
     private Status status;
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
