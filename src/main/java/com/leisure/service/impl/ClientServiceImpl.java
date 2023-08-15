@@ -107,6 +107,15 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    public Client getClientByUsername(Long dni) throws Exception {
+        Optional<Client> optionalClient = this.clientRepository.findByUsername(dni.toString());
+        if(optionalClient.isEmpty()){
+            throw new ResourceNotFoundException("No hay ningún cliente registrado con ese dni");
+        }
+        return optionalClient.get();
+    }
+
+    @Override
     public List<Client> getAllClients() throws Exception {
         List<Client> clientList = this.clientRepository.findAll();
         if(clientList.isEmpty()){
