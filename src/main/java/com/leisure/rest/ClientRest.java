@@ -32,6 +32,13 @@ public class ClientRest {
         ClientResource clientResource = mapping.map(client, ClientResource.class);
         return new ResponseEntity<>(clientResource, HttpStatus.OK);
     }
+    @PostMapping(path = "/saveClientAndTeam/{parentId}/{statusId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<ClientResource> saveClientAndTeam(@RequestBody CreateClientResource resource,
+                                                     @PathVariable Long statusId, @PathVariable Long parentId) throws Exception {
+        Client client = this.clientService.saveClientInDbAndTeam(mapping.map(resource, Client.class), parentId, statusId);
+        ClientResource clientResource = mapping.map(client, ClientResource.class);
+        return new ResponseEntity<>(clientResource, HttpStatus.OK);
+    }
     @PostMapping(path = "/updateClient/{clientId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<ClientResource> updateClient(@RequestBody UpdateClientResource resource,
                                                        @PathVariable Long clientId) throws Exception {

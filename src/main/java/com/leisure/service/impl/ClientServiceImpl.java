@@ -3,8 +3,10 @@ package com.leisure.service.impl;
 import com.leisure.config.exception.ResourceNotFoundException;
 import com.leisure.entity.Client;
 import com.leisure.entity.Status;
+import com.leisure.entity.Team;
 import com.leisure.repository.ClientRepository;
 import com.leisure.repository.StatusRepository;
+import com.leisure.repository.TeamRepository;
 import com.leisure.service.ClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,11 +26,12 @@ public class ClientServiceImpl implements ClientService {
     private ClientRepository clientRepository;
     @Autowired
     private StatusRepository statusRepository;
+    @Autowired
+    private TeamRepository teamRepository;
     private final String ENTITY = "Cliente";
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Override
     public Client save(Client client, Long statusId) throws Exception {
-        logger.error("a" + client);
         Optional<Status> status = this.statusRepository.findById(statusId);
         if(status.isEmpty()){
             throw new ResourceNotFoundException("Status", statusId);
@@ -43,6 +47,42 @@ public class ClientServiceImpl implements ClientService {
         }
 
         return this.clientRepository.save(client);
+    }
+
+    @Override
+    public Client saveClientInDbAndTeam(Client client, Long parentId, Long statusId) throws Exception {
+        Optional<Client> optionalClient = this.clientRepository.findById(parentId);
+        if(optionalClient.isEmpty()) {
+            throw new ResourceNotFoundException(ENTITY, statusId);
+        }
+        Optional<Status> status = this.statusRepository.findById(statusId);
+        if(status.isEmpty()){
+            throw new ResourceNotFoundException("Status", statusId);
+        }
+        client.setStatus(status.get());
+        Boolean existsUsername = this.clientRepository.existsByUsername(client.getUsername());
+        Boolean existsEmail = this.clientRepository.existsByEmail(client.getEmail());
+        if(Boolean.TRUE.equals(existsUsername)){
+            throw new RuntimeException(String.format("Ya existe un usuario registrado con el username %s", client.getUsername()));
+        } else if(Boolean.TRUE.equals(existsEmail)){
+            throw new RuntimeException(String.format("Ya existe un usuario registrado con el email %s", client.getEmail()));
+        }
+        List<Team> teamList = this.teamRepository.getTeamsByParentId(parentId);
+        if(teamList.size() > 3){
+            throw new RuntimeException("El máximo de miembros por equipo es de 3.");
+        }
+
+        Client newMember = this.clientRepository.save(client);
+        Date createdDate = new Date();
+
+        Team team = new Team();
+        team.setParentId(parentId);
+        team.setChildId(newMember.getId());
+        team.setIsActive(true);
+        team.setCreated_date(createdDate);
+        this.teamRepository.save(team);
+
+        return newMember;
     }
 
     @Override
