@@ -1,11 +1,19 @@
 package com.leisure.rest;
 
 import com.leisure.entity.Admin;
+import com.leisure.entity.Admin;
+import com.leisure.entity.Admin;
+import com.leisure.entity.dto.Admin.AdminResource;
+import com.leisure.entity.dto.Admin.CreateAdminResource;
+import com.leisure.entity.dto.Admin.UpdateAdminResource;
+import com.leisure.entity.mapping.AdminMapper;
 import com.leisure.service.AdminService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -14,8 +22,33 @@ import java.util.List;
 public class AdminRest {
     @Autowired
     private AdminService adminService;
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<Admin> getAdmins(){
-        return adminService.getAllAdmins();
+    @Autowired
+    private AdminMapper mapper;
+    @Autowired
+    private ModelMapper mapping;
+    @PostMapping(path = "/saveAdmin", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<AdminResource> saveAdmin(@RequestBody CreateAdminResource resource) throws Exception {
+        Admin admin = this.adminService.save(mapping.map(resource, Admin.class));
+        AdminResource adminResource = mapping.map(admin, AdminResource.class);
+        return new ResponseEntity<>(adminResource, HttpStatus.OK);
+    }
+    @GetMapping(path = "/getAllAdmins", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<List<AdminResource>> getAllAdmins() throws Exception{
+        List<Admin> adminList = this.adminService.getAllAdmins();
+        List<AdminResource> adminResource = mapper.modelListToList(adminList);
+        return new ResponseEntity<>(adminResource, HttpStatus.OK);
+    }
+    @GetMapping(path = "/getAdminById/{adminId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<AdminResource> getAdminById(@PathVariable Long adminId) throws Exception{
+        Admin admin = this.adminService.getAdminById(adminId);
+        AdminResource adminResource = mapping.map(admin, AdminResource.class);
+        return new ResponseEntity<>(adminResource, HttpStatus.OK);
+    }
+    @PostMapping(path = "/updateAdmin/{adminId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<AdminResource> updateAdmin(@RequestBody UpdateAdminResource resource,
+                                                       @PathVariable Long adminId) throws Exception {
+        Admin admin = this.adminService.update(mapping.map(resource, Admin.class), adminId);
+        AdminResource adminResource = mapping.map(admin, AdminResource.class);
+        return new ResponseEntity<>(adminResource, HttpStatus.OK);
     }
 }
