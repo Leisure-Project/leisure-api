@@ -14,8 +14,6 @@ import java.util.Date;
 @AllArgsConstructor
 @PrimaryKeyJoinColumn(referencedColumnName = "user_id")
 public class Client extends User{
-    @Column(name = "username", unique = true)
-    private String username;
     @Column(name = "activated_date")
     private Date activatedDate;
     @ManyToOne(targetEntity = Status.class)

@@ -10,7 +10,6 @@ import java.util.Date;
 @Setter
 public class ClientResource {
     private Long id;
-    private String username;
     private String name;
     private String lastname;
     private String dni;

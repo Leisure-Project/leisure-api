@@ -9,7 +9,6 @@ import java.util.Date;
 @Getter
 @Setter
 public class CreateClientResource {
-    private String username;
     private String name;
     private String lastname;
     private String dni;

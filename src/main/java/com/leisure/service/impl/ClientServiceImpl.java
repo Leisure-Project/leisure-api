@@ -38,10 +38,10 @@ public class ClientServiceImpl implements ClientService {
         }
         client.setStatus(status.get());
         logger.error("n" + client);
-        Boolean existsUsername = this.clientRepository.existsByUsername(client.getUsername());
+        Boolean existsUser = this.clientRepository.existsByDni(client.getDni());
         Boolean existsEmail = this.clientRepository.existsByEmail(client.getEmail());
-        if(Boolean.TRUE.equals(existsUsername)){
-            throw new RuntimeException(String.format("Ya existe un usuario registrado con el username %s", client.getUsername()));
+        if(Boolean.TRUE.equals(existsUser)){
+            throw new RuntimeException(String.format("Ya existe un usuario registrado con el dni %s", client.getDni()));
         } else if(Boolean.TRUE.equals(existsEmail)){
             throw new RuntimeException(String.format("Ya existe un usuario registrado con el email %s", client.getEmail()));
         }
@@ -60,10 +60,10 @@ public class ClientServiceImpl implements ClientService {
             throw new ResourceNotFoundException("Status", statusId);
         }
         client.setStatus(status.get());
-        Boolean existsUsername = this.clientRepository.existsByUsername(client.getUsername());
+        Boolean existsUser = this.clientRepository.existsByDni(client.getDni());
         Boolean existsEmail = this.clientRepository.existsByEmail(client.getEmail());
-        if(Boolean.TRUE.equals(existsUsername)){
-            throw new RuntimeException(String.format("Ya existe un usuario registrado con el username %s", client.getUsername()));
+        if(Boolean.TRUE.equals(existsUser)){
+            throw new RuntimeException(String.format("Ya existe un usuario registrado con el dni %s", client.getDni()));
         } else if(Boolean.TRUE.equals(existsEmail)){
             throw new RuntimeException(String.format("Ya existe un usuario registrado con el email %s", client.getEmail()));
         }
@@ -91,9 +91,14 @@ public class ClientServiceImpl implements ClientService {
         if(optionalClient.isEmpty()){
             throw new ResourceNotFoundException(ENTITY, clientId);
         }
+
         Client clientUpdate = optionalClient.get();
-        clientUpdate.setUsername(client.getUsername());
+        clientUpdate.setDni(client.getDni());
         clientUpdate.setPictureProfile(client.getPictureProfile());
+        Boolean existsUser = this.clientRepository.existsByDni(clientUpdate.getDni());
+        if(Boolean.TRUE.equals(existsUser)){
+            throw new RuntimeException(String.format("Ya existe un usuario registrado con el dni %s", clientUpdate.getDni()));
+        }
         return this.clientRepository.save(clientUpdate);
     }
 
@@ -107,8 +112,8 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Client getClientByUsername(Long dni) throws Exception {
-        Optional<Client> optionalClient = this.clientRepository.findByUsername(dni.toString());
+    public Client getClientByDni(String dni) throws Exception {
+        Optional<Client> optionalClient = this.clientRepository.findByDni(dni);
         if(optionalClient.isEmpty()){
             throw new ResourceNotFoundException("No hay ningún cliente registrado con ese dni");
         }

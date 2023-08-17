@@ -44,7 +44,7 @@ public class TeamServiceImpl implements TeamService {
 
         Boolean childUserInTeam = this.teamRepository.existsByChildId(team.getChildId());
         if(Boolean.TRUE.equals(childUserInTeam)){
-            throw new RuntimeException(String.format("El usuario %s ya se encuentra en un equipo.", childUser.get().getUsername()));
+            throw new RuntimeException(String.format("El usuario %s %s ya se encuentra en un equipo.", childUser.get().getName(), childUser.get().getLastName()));
         }
 
         return this.teamRepository.save(team);
@@ -99,7 +99,7 @@ public class TeamServiceImpl implements TeamService {
         }
         Boolean parentUserInTeam = this.teamRepository.existsByParentId(parentId);
         if(!parentUserInTeam){
-            throw new RuntimeException(String.format("El usuario %s no se encuentra en ningun equipo.", parentUser.get().getUsername()));
+            throw new RuntimeException(String.format("El usuario %s %s no se encuentra en ningun equipo.", parentUser.get().getName(), parentUser.get().getLastName()));
         }
         List<Team> teamList = this.teamRepository.getTeamsByParentId(parentId);
         List<TeamResource> teamResource = mapper.modelListToList(teamList);

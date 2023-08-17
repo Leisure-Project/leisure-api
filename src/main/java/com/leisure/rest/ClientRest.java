@@ -53,9 +53,9 @@ public class ClientRest {
         ClientResource clientResource = mapping.map(client, ClientResource.class);
         return new ResponseEntity<>(clientResource, HttpStatus.OK);
     }
-    @GetMapping(path = "/getClientByUsername/{username}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<ClientResource> getClientByUsername(@PathVariable Long username) throws Exception{
-        Client client = this.clientService.getClientByUsername(username);
+    @GetMapping(path = "/getClientByDni/{dni}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<ClientResource> getClientByDni(@PathVariable String dni) throws Exception{
+        Client client = this.clientService.getClientByDni(dni);
         ClientResource clientResource = mapping.map(client, ClientResource.class);
         return new ResponseEntity<>(clientResource, HttpStatus.OK);
     }
