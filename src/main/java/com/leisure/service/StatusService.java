@@ -7,4 +7,6 @@ import java.util.List;
 public interface StatusService {
     Status createStatus(Status status);
     List<Status> getAllStatus();
+
+    Status getStatusById(Long statusId);
 }

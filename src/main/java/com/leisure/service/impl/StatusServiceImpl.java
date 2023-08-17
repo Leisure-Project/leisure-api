@@ -1,5 +1,6 @@
 package com.leisure.service.impl;
 
+import com.leisure.config.exception.ResourceNotFoundException;
 import com.leisure.entity.Status;
 import com.leisure.repository.StatusRepository;
 import com.leisure.service.StatusService;
@@ -9,6 +10,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+
 @Service
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 public class StatusServiceImpl implements StatusService {
@@ -22,6 +25,15 @@ public class StatusServiceImpl implements StatusService {
     @Override
     public List<Status> getAllStatus() {
         return statusRepository.findAll();
+    }
+
+    @Override
+    public Status getStatusById(Long statusId) {
+        Optional<Status> optionalStatus = this.statusRepository.findById(statusId);
+        if(optionalStatus.isEmpty()){
+            throw new ResourceNotFoundException("Estado", statusId);
+        }
+        return optionalStatus.get();
     }
 
 }

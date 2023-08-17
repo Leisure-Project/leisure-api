@@ -3,10 +3,10 @@ package com.leisure.rest;
 import com.leisure.entity.Status;
 import com.leisure.service.StatusService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class StatusRest {
     @Autowired
     private StatusService statusService;
 
-    @RequestMapping(value = "create", method = RequestMethod.POST)
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
     public Status createStatus(@RequestBody Status status){
         return statusService.createStatus(status);
     }
@@ -24,5 +24,11 @@ public class StatusRest {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<Status> getStatus(){
         return statusService.getAllStatus();
+    }
+
+    @GetMapping(value = "/getStatusById/{statusId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<Status> getStatusById(@PathVariable Long statusId) throws Exception{
+        Status status = this.statusService.getStatusById(statusId);
+        return new ResponseEntity<>(status, HttpStatus.OK);
     }
 }
