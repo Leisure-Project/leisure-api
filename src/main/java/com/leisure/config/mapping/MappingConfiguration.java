@@ -1,9 +1,6 @@
 package com.leisure.config.mapping;
 
-import com.leisure.entity.mapping.AdminMapper;
-import com.leisure.entity.mapping.ClientMapper;
-import com.leisure.entity.mapping.TeamMapper;
-import com.leisure.entity.mapping.UserMapper;
+import com.leisure.entity.mapping.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,5 +26,9 @@ public class MappingConfiguration {
     @Bean
     public UserMapper userMapper(){
         return new UserMapper();
+    }
+    @Bean
+    public SalesMapper salesMapper(){
+        return new SalesMapper();
     }
 }
