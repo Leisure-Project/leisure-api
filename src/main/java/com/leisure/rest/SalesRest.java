@@ -37,8 +37,8 @@ public class SalesRest {
         salesResource.setClientResource(clientMapper.toResource(sales.getClient()));
         return new ResponseEntity<>(salesResource, HttpStatus.OK);
     }
-    @GetMapping(path = "/getAllSaless", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<List<SalesResource>> getAllSaless() throws Exception{
+    @GetMapping(path = "/getAllSales", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<List<SalesResource>> getAllSales() throws Exception{
         List<Sales> salesList = this.salesService.getAllSales();
         List<SalesResource> salesResource = mapper.modelListToList(salesList);
         IntStream.range(0, salesResource.size()).forEach(i -> salesResource.get(i).setClientResource(clientMapper.toResource(salesList.get(i).getClient())));
