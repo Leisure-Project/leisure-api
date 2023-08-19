@@ -8,6 +8,8 @@ import com.leisure.repository.ClientRepository;
 import com.leisure.repository.StatusRepository;
 import com.leisure.repository.TeamRepository;
 import com.leisure.service.ClientService;
+import com.leisure.util.Constants;
+import com.leisure.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -128,4 +131,111 @@ public class ClientServiceImpl implements ClientService {
         }
         return clientList;
     }
+
+    @Override
+    public String resetClients() throws Exception {
+        String message = "";
+        Status statusActive = this.statusRepository.getStatusByName(Constants.ESTADO_ACTIVO);
+        Status statusInactive = this.statusRepository.getStatusByName(Constants.ESTADO_INACTIVO);
+        List<Client> clientList = this.clientRepository.getAllClientsByStatusId(statusActive.getId());
+        if(clientList.isEmpty()){
+            throw new RuntimeException("No hay ningun usuario activo en la plataforma");
+        }
+        List<Client> clientsListAux = clientList.stream().map(x -> {
+            x.setStatus(statusInactive);
+            x.setActivatedDate(DateUtils.getCurrentDateAndHour());
+            return x;
+        }).collect(Collectors.toList());
+        message = String.format("Se cambio el estado a inactivo de %d clientes", clientsListAux.size());
+        return message;
+    }
+
+    @Override
+    public List<String> verifyClientsStatus() throws Exception {
+        List<String> messageList = new ArrayList<>();
+        String message = "";
+        Status statusInactive = this.statusRepository.getStatusByName(Constants.ESTADO_INACTIVO);
+        List<Client> clientList = this.clientRepository.getAllClientsByStatusId(statusInactive.getId());
+        if(clientList.isEmpty()){
+            throw new RuntimeException("No hay ningun usuario activo en la plataforma");
+        }
+        List<Client> clientsInactive = new ArrayList<>();
+        clientList.stream().filter(
+                x -> {
+                    LocalDate convertDate = x.getActivatedDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    LocalDate actualDate = LocalDate.now();
+                    LocalDate dateTwoMonthsLater = actualDate.minusMonths(2);
+                    logger.error("" + convertDate + " " + convertDate.isBefore(dateTwoMonthsLater));
+                    if(convertDate.isBefore(dateTwoMonthsLater)){
+                        clientsInactive.add(x);
+                    }
+                    return false;
+                }
+        ).collect(Collectors.toList());
+
+        message = String.format("Actualmente hay %d usuarios con un tiempo de inactividad mayor o igual a dos meses", clientsInactive.size());
+        messageList.add(message);
+
+        List<Long> parentsIdList = clientsInactive.stream().map(x -> x.getId()).collect(Collectors.toList());
+        logger.error(""+parentsIdList);
+        List<Team> teamList = this.teamRepository.getAllTeamByParentIdList(parentsIdList);
+        Map<Object, List<Team>> teamMap = this.groupResultByParentId(teamList);
+
+        List<Long> parentIdWithTeam = new ArrayList<>();
+        for (Long parentId : parentsIdList) {
+            if (teamMap.containsKey(parentId)) {
+                parentIdWithTeam.add(parentId);
+            }
+        }
+
+        message = String.format("De los %d usuarios inactivos, solo %d son jefes de un equipo", clientsInactive.size(), parentIdWithTeam.size());
+        messageList.add(message);
+
+        logger.error("" + teamMap);
+        List<Team> oldMembers = teamMap.values().stream()
+                .flatMap(List::stream)
+                .filter(Team::getIsActive)
+                .collect(Collectors.groupingBy(
+                        team -> team.getParentId(),
+                        Collectors.minBy(Comparator.comparing(team -> team.getCreated_date()))
+                ))
+                .values().stream()
+                .map(Optional::get)
+                .collect(Collectors.toList());
+        logger.error(""+oldMembers);
+
+        List<Long> newParents = oldMembers.stream().map(x -> {
+            x.setIsActive(false);
+            this.teamRepository.save(x);
+            return x.getChildId();
+        }).collect(Collectors.toList());
+        logger.error(""+newParents);
+
+        Map<Long, Map<String, Long>> resultMap = new HashMap<>();
+
+        for (int i = 0; i < parentIdWithTeam.size(); i++) {
+            Long parentId = parentIdWithTeam.get(i);
+            Long childId = newParents.get(i);
+            Map<String, Long> childMap = new HashMap<>();
+            childMap.put("parentId", parentId);
+            childMap.put("childId", childId);
+            resultMap.put(parentId, childMap);
+        }
+        logger.error("" + resultMap);
+        for (Team team : teamList) {
+            Map<String, Long> replaceMap = resultMap.get(team.getParentId());
+            if (replaceMap != null) {
+                team.setParentId(replaceMap.get("childId"));
+            }
+        }
+        logger.error("" + teamList);
+
+        return messageList;
+    }
+    public Map<Object, List<Team>> groupResultByParentId(List<Team> teamList){
+        return teamList.stream()
+                    .sorted((f1, f2) -> ((Date)f1.getCreated_date()).compareTo(f2.getCreated_date()))
+                    .collect(Collectors.groupingBy(team -> team.getParentId()));
+    }
 }
+

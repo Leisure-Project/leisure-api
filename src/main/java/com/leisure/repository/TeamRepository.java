@@ -11,4 +11,6 @@ public interface TeamRepository extends JpaRepository<Team,Long> {
     Boolean existsByChildId(Long childId);
     Boolean existsByParentId(Long parentId);
     List<Team> getTeamsByParentId(Long parentId);
+    @Query(value = "SELECT t FROM Team t WHERE t.parentId IN (?1)")
+    List<Team> getAllTeamByParentIdList(List<Long> parentsId) throws Exception;
 }

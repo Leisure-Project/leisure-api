@@ -66,4 +66,15 @@ public class ClientRest {
         return new ResponseEntity<>(clientResource, HttpStatus.OK);
     }
 
+    @PostMapping(path = "/resetClients")
+    public ResponseEntity<String> resetClients() throws Exception {
+        String message = this.clientService.resetClients();
+        return new ResponseEntity<>(message, HttpStatus.OK);
+    }
+    @PostMapping(path = "/verifyClientsStatus")
+    public ResponseEntity<List<String>> verifyClientsStatus() throws Exception {
+        List<String>  messageList = this.clientService.verifyClientsStatus();
+        return new ResponseEntity<>(messageList, HttpStatus.OK);
+    }
+
 }

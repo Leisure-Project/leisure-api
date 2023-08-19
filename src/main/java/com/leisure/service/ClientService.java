@@ -11,4 +11,6 @@ public interface ClientService {
     Client getClientById(Long clientId) throws Exception;
     Client getClientByDni(String dni) throws Exception;
     List<Client> getAllClients() throws Exception;
+    String resetClients() throws Exception;
+    List<String> verifyClientsStatus() throws Exception;
 }
