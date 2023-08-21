@@ -29,6 +29,8 @@ public class User {
     private String password;
     @Column(name = "dni")
     private String dni;
+    @Column(name = "phoneNumber")
+    private String phoneNumber;
     @Column(name = "date_created")
     private String date_created;
     @Column(name = "picture_profile")
