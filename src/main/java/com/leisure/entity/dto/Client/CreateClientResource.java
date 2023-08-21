@@ -13,6 +13,7 @@ public class CreateClientResource {
     private String lastname;
     private String dni;
     private String email;
+    private String phoneNumber;
     private Boolean isActive;
     private String password;
     private Date activatedDate;

@@ -13,9 +13,11 @@ public class ClientResource {
     private String name;
     private String lastname;
     private String dni;
+    private String email;
+    private String phoneNumber;
     private Date activatedDate;
     private Date createdDate;
     private String pictureProfile;
     private Boolean isActive;
-    private Status status;
+    private Long statusId;
 }
