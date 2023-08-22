@@ -31,6 +31,8 @@ public class ClientServiceImpl implements ClientService {
     private StatusRepository statusRepository;
     @Autowired
     private TeamRepository teamRepository;
+    @Autowired
+    private EmailServiceImpl emailService;
     private final String ENTITY = "Cliente";
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Override
@@ -84,7 +86,7 @@ public class ClientServiceImpl implements ClientService {
         team.setIsActive(true);
         team.setCreated_date(createdDate);
         this.teamRepository.save(team);
-
+        this.emailService.sendEmail(newMember.getId(), newMember.getEmail());
         return newMember;
     }
 
