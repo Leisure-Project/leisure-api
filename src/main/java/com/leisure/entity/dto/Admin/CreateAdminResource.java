@@ -11,7 +11,7 @@ public class CreateAdminResource {
     private String alias;
     private String name;
     private String lastname;
-    private String fullname;
+    private String dni;
     private String email;
     private String password;
     private Date createdDate;
