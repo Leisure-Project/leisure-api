@@ -5,6 +5,7 @@ import com.leisure.entity.Admin;
 import com.leisure.entity.Status;
 import com.leisure.repository.AdminRepository;
 import com.leisure.service.AdminService;
+import com.leisure.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -18,6 +19,8 @@ import java.util.Optional;
 public class AdminServiceImpl implements AdminService {
     @Autowired
     private AdminRepository adminRepository;
+    @Autowired
+    private AuthService authService;
 
     @Override
     public Admin save(Admin admin) throws Exception {
@@ -28,7 +31,7 @@ public class AdminServiceImpl implements AdminService {
         } else if(Boolean.TRUE.equals(existsByEmail)){
             throw new RuntimeException(String.format("Ya existse un usuario registrado con el email %s", admin.getEmail()));
         }
-        return this.adminRepository.save(admin);
+        return this.authService.registerAdmin(admin);
     }
 
     @Override

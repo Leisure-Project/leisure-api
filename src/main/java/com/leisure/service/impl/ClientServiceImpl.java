@@ -33,6 +33,8 @@ public class ClientServiceImpl implements ClientService {
     private TeamRepository teamRepository;
     @Autowired
     private EmailServiceImpl emailService;
+    @Autowired
+    private AuthServiceImpl authService;
     private final String ENTITY = "Cliente";
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Override
@@ -50,8 +52,7 @@ public class ClientServiceImpl implements ClientService {
         } else if(Boolean.TRUE.equals(existsEmail)){
             throw new RuntimeException(String.format("Ya existe un usuario registrado con el email %s", client.getEmail()));
         }
-
-        return this.clientRepository.save(client);
+        return this.authService.registerClient(client);
     }
 
     @Override
@@ -77,7 +78,8 @@ public class ClientServiceImpl implements ClientService {
             throw new RuntimeException("El máximo de miembros por equipo es de 3.");
         }
 
-        Client newMember = this.clientRepository.save(client);
+        Client newMember = this.authService.registerClient(client);
+
         Date createdDate = new Date();
 
         Team team = new Team();
@@ -86,7 +88,7 @@ public class ClientServiceImpl implements ClientService {
         team.setIsActive(true);
         team.setCreated_date(createdDate);
         this.teamRepository.save(team);
-        this.emailService.sendEmail(newMember.getId(), newMember.getEmail());
+        //this.emailService.sendEmail(newMember.getId(), newMember.getEmail());
         return newMember;
     }
 

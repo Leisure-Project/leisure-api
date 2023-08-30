@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.List;
 
 @RestController
@@ -59,6 +60,7 @@ public class ClientRest {
         ClientResource clientResource = mapping.map(client, ClientResource.class);
         return new ResponseEntity<>(clientResource, HttpStatus.OK);
     }
+    @RolesAllowed("Role_Admin")
     @GetMapping(path = "/getAllClients", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<ClientResource>> getAllClients() throws Exception{
         List<Client> clientList = this.clientService.getAllClients();

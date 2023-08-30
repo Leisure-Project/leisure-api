@@ -23,6 +23,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<User> getUserByDni(String dni) {
+        Optional<User> optionalUser = this.userRepository.getUserByDni(dni);
+        if(optionalUser.isEmpty()){
+            throw new ResourceNotFoundException("Usuario", dni);
+        }
+        return optionalUser;
+    }
+
+    @Override
     public String changeUserEmail(String email, Long userId) {
         Optional<User> optionalUser = this.userRepository.findById(userId);
         if(optionalUser.isEmpty()){
