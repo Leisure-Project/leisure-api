@@ -15,10 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -105,6 +102,49 @@ public class TeamServiceImpl implements TeamService {
         List<TeamResource> teamResource = mapper.modelListToList(teamList);
 
         return teamResource.stream()
+                .sorted((f1, f2) -> ((Date)f1.getCreated_date()).compareTo(f2.getCreated_date()))
+                .collect(Collectors.groupingBy(team -> team.getParentId()));
+    }
+    @Override
+    public Map<Integer, List<Map<Object, List<TeamResource>>>> getTeamHierarchy(Long parentId) throws Exception {
+        Boolean parentUserInTeam = this.teamRepository.existsByParentId(parentId);
+        if(!parentUserInTeam){
+            throw new RuntimeException(String.format("El usuario %d no es parent de ningun equipo.", parentId));
+        }
+        Integer maxLevel = 9;
+        Integer level = 0;
+        List<Long> currentParents = new ArrayList<>();
+        Map<Integer, List<Map<Object, List<TeamResource>>>> clients = new HashMap<>();
+        level++;
+        while (level < maxLevel+1){
+            List<Map<Object, List<TeamResource>>> maps = new ArrayList<>();
+            if(level.equals(1)){
+                maps.add(this.getAllTeamsGrouped(parentId));
+                currentParents.add(parentId);
+            } else {
+                List<Team> teamList = this.teamRepository.getAllTeamByParentIdList(currentParents);
+                currentParents.clear();
+                List<Long> childsId = teamList.stream().map(Team::getChildId).collect(Collectors.toList());
+                List<Team> newLevelList = this.teamRepository.getAllTeamByParentIdList(childsId);
+                Map<Object, List<Team>> teamMap = this.groupResultByParentId(newLevelList);
+                List<Long> parentIdWithTeam = new ArrayList<>();
+                for (Long id : childsId) {
+                    if (teamMap.containsKey(id)) {
+                        parentIdWithTeam.add(id);
+                    }
+                }
+                for (Long aLong : parentIdWithTeam) {
+                    maps.add(this.getAllTeamsGrouped(aLong));
+                    currentParents.add(aLong);
+                }
+            }
+            clients.put(level, maps);
+            level++;
+        }
+    return clients;
+    }
+    public Map<Object, List<Team>> groupResultByParentId(List<Team> teamList){
+        return teamList.stream()
                 .sorted((f1, f2) -> ((Date)f1.getCreated_date()).compareTo(f2.getCreated_date()))
                 .collect(Collectors.groupingBy(team -> team.getParentId()));
     }

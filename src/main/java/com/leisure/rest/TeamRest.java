@@ -1,13 +1,11 @@
 package com.leisure.rest;
 
 import com.leisure.entity.Team;
-import com.leisure.entity.Team;
 import com.leisure.entity.dto.Team.TeamResource;
 import com.leisure.entity.dto.Team.CreateTeamResource;
 import com.leisure.entity.dto.Team.UpdateTeamResource;
 import com.leisure.entity.mapping.TeamMapper;
 import com.leisure.service.TeamService;
-import lombok.Getter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -70,4 +68,10 @@ public class TeamRest {
         Map<Object, List<TeamResource>> objectListMap = this.teamService.getAllTeamsGrouped(parentId);
         return new ResponseEntity<>(objectListMap, HttpStatus.OK);
     }
+    @GetMapping(path = "/getTeamHierarchy/{parentId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<Map<Integer, List<Map<Object, List<TeamResource>>>> > getTeamHierarchy(@PathVariable Long parentId) throws Exception{
+        Map<Integer, List<Map<Object, List<TeamResource>>>>  objectListMap = this.teamService.getTeamHierarchy(parentId);
+        return new ResponseEntity<>(objectListMap, HttpStatus.OK);
+    }
+
 }
