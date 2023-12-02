@@ -29,7 +29,18 @@ public class ScheduledTasks {
             logger.error("Error al resetear clientes. " + e.getMessage());
         }
     }
-
+    @Async
+    @Scheduled(cron = "55 11 2 * * ?")
+    public void calculateEarnings(){
+        try {
+            logger.error("Inicio de calculo de ganancias");
+            List<String> message =  this.clientService.calculateEarnings();
+            logger.error("Fin de calculo de ganancias");
+            logger.error(String.format("%s", message));
+        } catch (Exception e){
+            logger.error("Error al calcular las ganancias: " + e.getMessage());
+        }
+    }
     @Async
     @Scheduled(cron = "* */60 * * * *")
     public void verifyClientsStatus() {

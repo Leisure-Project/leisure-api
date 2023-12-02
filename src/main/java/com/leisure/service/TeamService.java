@@ -1,6 +1,7 @@
 package com.leisure.service;
 
 import com.leisure.entity.Team;
+import com.leisure.entity.dto.Team.MembersTeamCountResource;
 import com.leisure.entity.dto.Team.TeamResource;
 
 import java.util.List;
@@ -15,4 +16,5 @@ public interface TeamService {
     Map<Object, List<TeamResource>> getTeams() throws Exception;
     Map<Object, List<TeamResource>> getAllTeamsGrouped(Long parentId) throws Exception;
     Map<Integer, List<Map<Object, List<TeamResource>>>>  getTeamHierarchy(Long parentId) throws Exception;
+    List<MembersTeamCountResource> getMembersCount() throws Exception;
 }

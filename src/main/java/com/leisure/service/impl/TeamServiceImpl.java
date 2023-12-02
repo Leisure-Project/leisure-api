@@ -3,6 +3,7 @@ package com.leisure.service.impl;
 import com.leisure.config.exception.ResourceNotFoundException;
 import com.leisure.entity.Client;
 import com.leisure.entity.Team;
+import com.leisure.entity.dto.Team.MembersTeamCountResource;
 import com.leisure.entity.dto.Team.TeamResource;
 import com.leisure.entity.mapping.TeamMapper;
 import com.leisure.repository.ClientRepository;
@@ -143,6 +144,12 @@ public class TeamServiceImpl implements TeamService {
         }
     return clients;
     }
+
+    @Override
+    public List<MembersTeamCountResource> getMembersCount() throws Exception {
+        return this.teamRepository.getMembersCount();
+    }
+
     public Map<Object, List<Team>> groupResultByParentId(List<Team> teamList){
         return teamList.stream()
                 .sorted((f1, f2) -> ((Date)f1.getCreated_date()).compareTo(f2.getCreated_date()))

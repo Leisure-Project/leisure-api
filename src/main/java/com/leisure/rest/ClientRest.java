@@ -78,5 +78,9 @@ public class ClientRest {
         List<String>  messageList = this.clientService.verifyClientsStatus();
         return new ResponseEntity<>(messageList, HttpStatus.OK);
     }
-
+    @PostMapping(path = "/calculateEarnings")
+    public ResponseEntity<List<String>> calculateEarnings() throws Exception {
+        List<String>  messageList = this.clientService.calculateEarnings();
+        return new ResponseEntity<>(messageList, HttpStatus.OK);
+    }
 }

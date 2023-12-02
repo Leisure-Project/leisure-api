@@ -2,9 +2,12 @@ package com.leisure.service.impl;
 
 import com.leisure.config.exception.ResourceNotFoundException;
 import com.leisure.entity.Client;
+import com.leisure.entity.Sales;
 import com.leisure.entity.Status;
 import com.leisure.entity.Team;
+import com.leisure.entity.dto.Team.MembersTeamCountResource;
 import com.leisure.repository.ClientRepository;
+import com.leisure.repository.SalesRepository;
 import com.leisure.repository.StatusRepository;
 import com.leisure.repository.TeamRepository;
 import com.leisure.service.ClientService;
@@ -31,6 +34,8 @@ public class ClientServiceImpl implements ClientService {
     private StatusRepository statusRepository;
     @Autowired
     private TeamRepository teamRepository;
+    @Autowired
+    private SalesRepository salesRepository;
     @Autowired
     private EmailServiceImpl emailService;
     @Autowired
@@ -236,6 +241,26 @@ public class ClientServiceImpl implements ClientService {
 
         return messageList;
     }
+
+    @Override
+    public List<String> calculateEarnings() throws Exception {
+        List<String> messages = new ArrayList<>();
+        List<MembersTeamCountResource> teams = this.teamRepository.getMembersCount();
+        messages.add(String.format("Se encontró un total de %d equipos.", teams.size()));
+        for (MembersTeamCountResource item : teams){
+            Sales sales = new Sales();
+            sales.setClient(this.clientRepository.findById(item.getParentId()).get());
+            sales.setPrice(3.0 * item.getTeamMembers());
+            sales.setAmount(Math.toIntExact(item.getTeamMembers()));
+            sales.setComments("Ganancias mensuales.");
+            sales.setCreated_date(DateUtils.getCurrentDateAndHour());
+            sales.setIsActive(true);
+            this.salesRepository.save(sales);
+        }
+        messages.add("Ventas guardadas exitosamente en la base de datos.");
+        return messages;
+    }
+
     public Map<Object, List<Team>> groupResultByParentId(List<Team> teamList){
         return teamList.stream()
                     .sorted((f1, f2) -> ((Date)f1.getCreated_date()).compareTo(f2.getCreated_date()))

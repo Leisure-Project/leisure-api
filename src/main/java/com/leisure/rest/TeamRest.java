@@ -1,6 +1,7 @@
 package com.leisure.rest;
 
 import com.leisure.entity.Team;
+import com.leisure.entity.dto.Team.MembersTeamCountResource;
 import com.leisure.entity.dto.Team.TeamResource;
 import com.leisure.entity.dto.Team.CreateTeamResource;
 import com.leisure.entity.dto.Team.UpdateTeamResource;
@@ -73,5 +74,9 @@ public class TeamRest {
         Map<Integer, List<Map<Object, List<TeamResource>>>>  objectListMap = this.teamService.getTeamHierarchy(parentId);
         return new ResponseEntity<>(objectListMap, HttpStatus.OK);
     }
-
+    @GetMapping(path = "/getMembersCount", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<List<MembersTeamCountResource>> getMembersCount() throws Exception{
+        List<MembersTeamCountResource>  list = this.teamService.getMembersCount();
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
 }
