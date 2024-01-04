@@ -150,6 +150,11 @@ public class TeamServiceImpl implements TeamService {
         return this.teamRepository.getMembersCount();
     }
 
+    @Override
+    public MembersTeamCountResource getMembersCountByParentId(Long parentId) throws Exception {
+        return this.teamRepository.getMembersCountByParentId(parentId);
+    }
+
     public Map<Object, List<Team>> groupResultByParentId(List<Team> teamList){
         return teamList.stream()
                 .sorted((f1, f2) -> ((Date)f1.getCreated_date()).compareTo(f2.getCreated_date()))

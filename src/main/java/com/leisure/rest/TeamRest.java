@@ -79,4 +79,10 @@ public class TeamRest {
         List<MembersTeamCountResource>  list = this.teamService.getMembersCount();
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
+
+    @GetMapping(path = "/getMembersCountByParentId/{parentId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<MembersTeamCountResource> getMembersCountByParentId(@PathVariable Long parentId) throws Exception{
+        MembersTeamCountResource  list = this.teamService.getMembersCountByParentId(parentId);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
 }
