@@ -9,5 +9,5 @@ public interface AdminService {
     Admin update(Admin admin, Long adminId) throws Exception;
     List<Admin> getAllAdmins() throws Exception;
     Admin getAdminById(Long adminId);
-
+    String changeClientStatus(Long clientId);
 }

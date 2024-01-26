@@ -51,4 +51,9 @@ public class AdminRest {
         AdminResource adminResource = mapping.map(admin, AdminResource.class);
         return new ResponseEntity<>(adminResource, HttpStatus.OK);
     }
+    @PostMapping(path = "/changeClientStatus/{clientId}", produces = { MediaType.TEXT_PLAIN_VALUE})
+    public ResponseEntity<String> changeClientStatus(@PathVariable Long clientId) throws Exception {
+        return new ResponseEntity<>(this.adminService.changeClientStatus(clientId), HttpStatus.OK);
+    }
+
 }
