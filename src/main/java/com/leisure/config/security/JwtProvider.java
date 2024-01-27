@@ -1,7 +1,9 @@
 package com.leisure.config.security;
 
 import com.leisure.entity.PrincipalUser;
+import com.leisure.repository.UserRepository;
 import io.jsonwebtoken.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,6 +19,8 @@ public class JwtProvider {
     private String secret;
     @Value("${jwt.expiration}")
     private int expirationDays;
+    @Autowired
+    private UserRepository usersRepository;
 
     public String generateToken(Authentication authentication) {
         PrincipalUser principalUser =(PrincipalUser) authentication.getPrincipal();
@@ -31,6 +35,9 @@ public class JwtProvider {
     }
     public String getUsernameFromToken(String token) {
         return Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(token).getBody().getSubject();
+    }
+    public Long getUserIdFromToken(String token){
+        return this.usersRepository.getUserIdByDni(this.getUsernameFromToken(token));
     }
     public boolean validateToken(String token) {
         try {

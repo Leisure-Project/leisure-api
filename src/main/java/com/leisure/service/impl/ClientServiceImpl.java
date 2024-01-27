@@ -105,12 +105,8 @@ public class ClientServiceImpl implements ClientService {
         }
 
         Client clientUpdate = optionalClient.get();
-        clientUpdate.setDni(client.getDni());
         clientUpdate.setPictureProfile(client.getPictureProfile());
-        Boolean existsUser = this.clientRepository.existsByDni(clientUpdate.getDni());
-        if(Boolean.TRUE.equals(existsUser)){
-            throw new RuntimeException(String.format("Ya existe un usuario registrado con el dni %s", clientUpdate.getDni()));
-        }
+
         return this.clientRepository.save(clientUpdate);
     }
 
