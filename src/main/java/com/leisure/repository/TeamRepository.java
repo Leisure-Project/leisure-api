@@ -23,4 +23,6 @@ public interface TeamRepository extends JpaRepository<Team,Long> {
             "FROM Team t JOIN Client c ON t.childId = c.id WHERE c.status.name = 'ACTIVO' and t.parentId = ?1 " +
             "GROUP BY t.parentId")
     MembersTeamCountResource getMembersCountByParentId(Long parentId);
+    @Query("select count(t) from Team t where t.parentId = ?1")
+    Long getMemberCountByParent(Long parentId);
 }

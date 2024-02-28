@@ -7,6 +7,7 @@ import com.leisure.entity.dto.Team.TeamResource;
 import com.leisure.entity.dto.Team.CreateTeamResource;
 import com.leisure.entity.dto.Team.UpdateTeamResource;
 import com.leisure.entity.mapping.TeamMapper;
+import com.leisure.repository.TeamRepository;
 import com.leisure.service.TeamService;
 import com.leisure.util.RequestUtil;
 import org.modelmapper.ModelMapper;
@@ -32,6 +33,8 @@ public class TeamRest {
     private ModelMapper mapping;
     @Autowired
     private RequestUtil requestUtil;
+    @Autowired
+    private TeamRepository teamRepository;
     @PostMapping(path = "/saveTeam", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<TeamResource> saveTeam(@RequestBody CreateTeamResource resource) throws Exception {
         mapping.getConfiguration().setAmbiguityIgnored(true);
@@ -55,6 +58,11 @@ public class TeamRest {
         Team team = this.teamService.getTeamById(teamId);
         TeamResource teamResource = mapper.toResource(team);
         return new ResponseEntity<>(teamResource, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/getMemberCountByParent/{parentId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<Long> getMemberCountByParent(@PathVariable Long parentId) throws Exception{
+        return new ResponseEntity<>(this.teamRepository.getMemberCountByParent(parentId), HttpStatus.OK);
     }
 
     @GetMapping(path = "/getAllTeams", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})

@@ -39,7 +39,8 @@ public class TeamServiceImpl implements TeamService {
         } else if(childUser.isEmpty()){
             throw new ResourceNotFoundException("Cliente", team.getChildId());
         }
-
+        Long teamCount = this.teamRepository.getMemberCountByParent(parentUser.get().getId());
+        if(teamCount.intValue() == 3) throw new RuntimeException("El máximo permitido de miembros por equipo es de 3.");
         Boolean childUserInTeam = this.teamRepository.existsByChildId(team.getChildId());
         if(Boolean.TRUE.equals(childUserInTeam)){
             throw new RuntimeException(String.format("El usuario %s %s ya se encuentra en un equipo.", childUser.get().getName(), childUser.get().getLastName()));
