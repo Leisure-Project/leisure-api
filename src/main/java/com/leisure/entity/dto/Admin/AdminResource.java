@@ -12,5 +12,5 @@ public class AdminResource {
     private String alias;
     private String name;
     private String lastname;
-    private Date registrationDate;
+    private String date_created;
 }
