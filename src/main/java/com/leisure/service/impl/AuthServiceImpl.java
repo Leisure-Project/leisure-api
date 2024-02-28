@@ -5,6 +5,7 @@ import com.leisure.config.security.JwtProvider;
 import com.leisure.entity.Admin;
 import com.leisure.entity.Client;
 import com.leisure.entity.Role;
+import com.leisure.entity.User;
 import com.leisure.entity.dto.Admin.CreateAdminResource;
 import com.leisure.entity.dto.Client.CreateClientResource;
 import com.leisure.entity.dto.Jwt.LoginResource;
@@ -13,7 +14,9 @@ import com.leisure.entity.enumeration.Rolname;
 import com.leisure.repository.AdminRepository;
 import com.leisure.repository.ClientRepository;
 import com.leisure.repository.RoleRepository;
+import com.leisure.repository.UserRepository;
 import com.leisure.service.AuthService;
+import com.leisure.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -37,6 +41,8 @@ public class AuthServiceImpl implements AuthService {
     private AdminRepository adminRepository;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
     @Autowired
@@ -67,6 +73,7 @@ public class AuthServiceImpl implements AuthService {
         roleSet.add(getClientRole());
         request.setPassword(passwordEncoder.encode(request.getPassword()));
         request.setRoles(roleSet);
+        request.setDate_created(DateUtils.convertDateToString(new Date()));
         return clientRepository.save(request);
     }
 
@@ -76,6 +83,7 @@ public class AuthServiceImpl implements AuthService {
         roleSet.add(getAdminRole());
         request.setPassword(passwordEncoder.encode(request.getPassword()));
         request.setRoles(roleSet);
+        request.setDate_created(DateUtils.convertDateToString(new Date()));
         return adminRepository.save(request);
     }
 
@@ -86,5 +94,11 @@ public class AuthServiceImpl implements AuthService {
         String token = String.format("Bearer %s", provider.generateToken(authentication));
         TokenResource tokenResource = new TokenResource(token);
         return tokenResource;
+    }
+
+    @Override
+    public Boolean isAdmin(Long userId) {
+        User user = this.userRepository.findById(userId).get();
+        return user.getRoles().stream().anyMatch(r -> r.getName().name().equals(Rolname.Role_Admin.name()));
     }
 }

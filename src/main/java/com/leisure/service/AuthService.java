@@ -12,4 +12,6 @@ public interface AuthService {
     Client registerClient(Client request) throws Exception;
     Admin registerAdmin(Admin request) throws Exception;
     TokenResource login(LoginResource loginResource) throws Exception;
+
+    Boolean isAdmin(Long userId);
 }
