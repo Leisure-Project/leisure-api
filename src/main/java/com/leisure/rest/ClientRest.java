@@ -49,7 +49,7 @@ public class ClientRest {
     @PostMapping(path = "/updateClient/{clientId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<ClientResource> updateClient(@RequestBody UpdateClientResource resource,
                                                        @PathVariable Long clientId) throws Exception {
-        this.validate(clientId);
+        //this.validate(clientId);
         Client client = this.clientService.update(mapping.map(resource, Client.class), clientId);
         ClientResource clientResource = mapping.map(client, ClientResource.class);
         return new ResponseEntity<>(clientResource, HttpStatus.OK);
@@ -59,7 +59,7 @@ public class ClientRest {
 
     @GetMapping(path = "/getClientById/{clientId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<ClientResource> getClientById(@PathVariable Long clientId) throws Exception{
-        this.validate(clientId);
+        //this.validate(clientId);
         Client client = this.clientService.getClientById(clientId);
         ClientResource clientResource = mapping.map(client, ClientResource.class);
         return new ResponseEntity<>(clientResource, HttpStatus.OK);
