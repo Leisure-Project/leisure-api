@@ -8,6 +8,7 @@ import com.leisure.entity.dto.Admin.AdminResource;
 import com.leisure.entity.dto.Admin.CreateAdminResource;
 import com.leisure.entity.dto.Admin.UpdateAdminResource;
 import com.leisure.entity.mapping.AdminMapper;
+import com.leisure.repository.AdminRepository;
 import com.leisure.service.AdminService;
 import com.leisure.util.RequestUtil;
 import org.modelmapper.ModelMapper;
@@ -30,9 +31,11 @@ public class AdminRest {
     private ModelMapper mapping;
     @Autowired
     private RequestUtil requestUtil;
+    @Autowired
+    private AdminRepository adminRepository;
     @PostMapping(path = "/saveAdmin", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<AdminResource> saveAdmin(@RequestBody CreateAdminResource resource) throws Exception {
-        if(!this.requestUtil.isAdmin()) throw new ForbiddenAccessException();
+        if(this.adminRepository.count() > 0 && (!this.requestUtil.isAdmin())) throw new ForbiddenAccessException();
         Admin admin = this.adminService.save(mapping.map(resource, Admin.class));
         AdminResource adminResource = mapping.map(admin, AdminResource.class);
         return new ResponseEntity<>(adminResource, HttpStatus.OK);
