@@ -54,6 +54,13 @@ public class AdminRest {
         AdminResource adminResource = mapping.map(admin, AdminResource.class);
         return new ResponseEntity<>(adminResource, HttpStatus.OK);
     }
+    @GetMapping(path = "/getAdminByDni/{dni}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<AdminResource> getAdminByDni(@PathVariable String dni) throws Exception{
+        if(!this.requestUtil.isAdmin()) throw new ForbiddenAccessException();
+        Admin admin = this.adminService.getAdminByDni(dni);
+        AdminResource adminResource = mapping.map(admin, AdminResource.class);
+        return new ResponseEntity<>(adminResource, HttpStatus.OK);
+    }
     @PostMapping(path = "/updateAdmin/{adminId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<AdminResource> updateAdmin(@RequestBody UpdateAdminResource resource,
                                                        @PathVariable Long adminId) throws Exception {

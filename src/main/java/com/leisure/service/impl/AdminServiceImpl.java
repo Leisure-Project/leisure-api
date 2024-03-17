@@ -89,4 +89,11 @@ public class AdminServiceImpl implements AdminService {
 
         return String.format("Se cambió el estado del cliente con DNI %s a %s", client.getDni(), client.getStatus().getName());
     }
+
+    @Override
+    public Admin getAdminByDni(String dni) {
+        Optional<Admin> optionalAdmin = this.adminRepository.getAdminByDni(dni);
+        if(optionalAdmin.isEmpty()) throw new ResourceNotFoundException("Admin", dni);
+        return optionalAdmin.get();
+    }
 }

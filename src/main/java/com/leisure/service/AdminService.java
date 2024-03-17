@@ -10,4 +10,6 @@ public interface AdminService {
     List<Admin> getAllAdmins() throws Exception;
     Admin getAdminById(Long adminId);
     String changeClientStatus(Long clientId);
+
+    Admin getAdminByDni(String dni);
 }
