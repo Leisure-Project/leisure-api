@@ -6,6 +6,7 @@ import com.leisure.entity.Sales;
 import com.leisure.entity.Status;
 import com.leisure.entity.Team;
 import com.leisure.entity.dto.Team.MembersTeamCountResource;
+import com.leisure.entity.enumeration.StatusName;
 import com.leisure.repository.ClientRepository;
 import com.leisure.repository.SalesRepository;
 import com.leisure.repository.StatusRepository;
@@ -140,8 +141,8 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public String resetClients() throws Exception {
         String message = "";
-        Status statusActive = this.statusRepository.getStatusByName(Constants.ESTADO_ACTIVO);
-        Status statusInactive = this.statusRepository.getStatusByName(Constants.ESTADO_INACTIVO);
+        Status statusActive = this.statusRepository.getStatusByName(StatusName.valueOf(Constants.ESTADO_ACTIVO));
+        Status statusInactive = this.statusRepository.getStatusByName(StatusName.valueOf(Constants.ESTADO_INACTIVO));
         List<Client> clientList = this.clientRepository.getAllClientsByStatusId(statusActive.getId());
         if(clientList.isEmpty()){
             throw new RuntimeException("No hay ningun usuario activo en la plataforma");
@@ -159,10 +160,10 @@ public class ClientServiceImpl implements ClientService {
     public List<String> verifyClientsStatus() throws Exception {
         List<String> messageList = new ArrayList<>();
         String message = "";
-        Status statusInactive = this.statusRepository.getStatusByName(Constants.ESTADO_INACTIVO);
+        Status statusInactive = this.statusRepository.getStatusByName(StatusName.valueOf(Constants.ESTADO_INACTIVO));
         List<Client> clientList = this.clientRepository.getAllClientsByStatusId(statusInactive.getId());
         if(clientList.isEmpty()){
-            throw new RuntimeException("No hay ningun usuario activo en la plataforma");
+            throw new RuntimeException("No hay ningun usuario inactivo en la plataforma");
         }
         List<Client> clientsInactive = new ArrayList<>();
         clientList.stream().filter(
