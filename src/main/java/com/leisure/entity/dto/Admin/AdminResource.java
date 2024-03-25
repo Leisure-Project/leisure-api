@@ -12,5 +12,9 @@ public class AdminResource {
     private String alias;
     private String name;
     private String lastname;
+    private String dni;
+    private String email;
+    private String phoneNumber;
+    private String pictureProfile;
     private String date_created;
 }
