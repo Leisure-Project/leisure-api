@@ -1,5 +1,6 @@
 package com.leisure.entity.dto.Client;
 
+import com.leisure.entity.Bank;
 import com.leisure.entity.Status;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,5 +20,6 @@ public class ClientResource {
     private String date_created;
     private String pictureProfile;
     private Boolean isActive;
-    private Long statusId;
+    private Status status;
+    private Bank bank;
 }

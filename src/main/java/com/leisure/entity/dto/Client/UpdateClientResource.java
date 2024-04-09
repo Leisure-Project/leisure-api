@@ -1,5 +1,6 @@
 package com.leisure.entity.dto.Client;
 
+import com.leisure.entity.Bank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,4 +8,9 @@ import lombok.Setter;
 @Setter
 public class UpdateClientResource {
     private String pictureProfile;
+    private String email;
+    private String phoneNumber;
+    private String cci;
+    private String dni;
+    private Bank bank;
 }

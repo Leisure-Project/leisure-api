@@ -104,10 +104,13 @@ public class ClientServiceImpl implements ClientService {
         if(optionalClient.isEmpty()){
             throw new ResourceNotFoundException(ENTITY, clientId);
         }
-
         Client clientUpdate = optionalClient.get();
+        clientUpdate.setEmail(client.getEmail());
         clientUpdate.setPictureProfile(client.getPictureProfile());
-
+        clientUpdate.setPhoneNumber(client.getPhoneNumber());
+        clientUpdate.setDni(client.getDni());
+        clientUpdate.setCci(client.getCci());
+        clientUpdate.setBank(client.getBank());
         return this.clientRepository.save(clientUpdate);
     }
 

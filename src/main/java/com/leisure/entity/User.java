@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Null;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,10 +32,15 @@ public class User {
     private String dni;
     @Column(name = "phoneNumber")
     private String phoneNumber;
+    @Column(name = "cci")
+    private String cci;
     @Column(name = "date_created")
     private String date_created;
     @Column(name = "picture_profile")
     private String pictureProfile;
+    @ManyToOne(targetEntity = Bank.class)
+    @JoinColumn(name = "bank_id")
+    private Bank bank;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
