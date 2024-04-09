@@ -18,4 +18,6 @@ public interface TeamService {
     Map<Integer, List<Map<Object, List<TeamResource>>>>  getTeamHierarchy(Long parentId) throws Exception;
     List<MembersTeamCountResource> getMembersCount() throws Exception;
     MembersTeamCountResource getMembersCountByParentId(Long parentId) throws Exception;
+
+    Map<String, Long> getMemberCountTeamHierarchy(Long parentId) throws Exception;
 }

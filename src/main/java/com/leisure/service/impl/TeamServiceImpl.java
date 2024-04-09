@@ -115,6 +115,9 @@ public class TeamServiceImpl implements TeamService {
         }
         Integer maxLevel = 9;
         Integer level = 0;
+        long totalMembers = 0;
+        long totalMembersActive = 0;
+        long totalMembersInactive = 0;
         List<Long> currentParents = new ArrayList<>();
         Map<Integer, List<Map<Object, List<TeamResource>>>> clients = new HashMap<>();
         level++;
@@ -123,6 +126,7 @@ public class TeamServiceImpl implements TeamService {
             if(level.equals(1)){
                 maps.add(this.getAllTeamsGrouped(parentId));
                 currentParents.add(parentId);
+                logger.error("currentParents " + currentParents.stream().collect(Collectors.toList()));
             } else {
                 List<Team> teamList = this.teamRepository.getAllTeamByParentIdList(currentParents);
                 currentParents.clear();
@@ -145,6 +149,53 @@ public class TeamServiceImpl implements TeamService {
         }
     return clients;
     }
+    @Override
+    public Map<String, Long> getMemberCountTeamHierarchy(Long parentId) throws Exception{
+        Boolean parentUserInTeam = this.teamRepository.existsByParentId(parentId);
+        if(!parentUserInTeam){
+            throw new RuntimeException(String.format("El usuario %d no es parent de ningun equipo.", parentId));
+        }
+        Integer maxLevel = 9;
+        Integer level = 0;
+        long totalMembers = 0;
+        long totalMembersActive = 0;
+        long totalMembersInactive = 0;
+        List<Long> currentParents = new ArrayList<>();
+        Map<String, Long> clients = new HashMap<>();
+        level++;
+        while (level < maxLevel+1){
+            List<Map<Object, List<TeamResource>>> maps = new ArrayList<>();
+            if(level.equals(1)){
+                maps.add(this.getAllTeamsGrouped(parentId));
+                currentParents.add(parentId);
+                logger.error("currentParents " + currentParents.stream().collect(Collectors.toList()));
+            } else {
+                List<Team> teamList = this.teamRepository.getAllTeamByParentIdList(currentParents);
+                currentParents.clear();
+                List<Long> childsId = teamList.stream().map(Team::getChildId).collect(Collectors.toList());
+                List<Team> newLevelList = this.teamRepository.getAllTeamByParentIdList(childsId);
+                Map<Object, List<Team>> teamMap = this.groupResultByParentId(newLevelList);
+                List<Long> parentIdWithTeam = new ArrayList<>();
+                for (Long id : childsId) {
+                    if (teamMap.containsKey(id)) {
+                        parentIdWithTeam.add(id);
+                    }
+                }
+                for (Long aLong : parentIdWithTeam) {
+                    maps.add(this.getAllTeamsGrouped(aLong));
+                    currentParents.add(aLong);
+                }
+            }
+            totalMembers = totalMembers + maps.stream().flatMap(m -> m.values().stream()).mapToLong(List::size).sum();
+            totalMembersActive = totalMembersActive + maps.stream().flatMap(m -> m.values().stream()).flatMap(List::stream).filter(TeamResource::getIsActive).count();
+            totalMembersInactive = totalMembersInactive + maps.stream().flatMap(m -> m.values().stream()).flatMap(List::stream).filter(t -> !t.getIsActive()).count();
+            level++;
+        }
+        clients.put("totalMembers", totalMembers);
+        clients.put("totalMembersActive", totalMembersActive);
+        clients.put("totalMembersInactive", totalMembersInactive);
+        return clients;
+    }
 
     @Override
     public List<MembersTeamCountResource> getMembersCount() throws Exception {
@@ -155,6 +206,8 @@ public class TeamServiceImpl implements TeamService {
     public MembersTeamCountResource getMembersCountByParentId(Long parentId) throws Exception {
         return this.teamRepository.getMembersCountByParentId(parentId);
     }
+
+
 
     public Map<Object, List<Team>> groupResultByParentId(List<Team> teamList){
         return teamList.stream()

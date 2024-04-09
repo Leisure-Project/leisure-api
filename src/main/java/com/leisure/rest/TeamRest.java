@@ -91,6 +91,11 @@ public class TeamRest {
         Map<Integer, List<Map<Object, List<TeamResource>>>>  objectListMap = this.teamService.getTeamHierarchy(parentId);
         return new ResponseEntity<>(objectListMap, HttpStatus.OK);
     }
+    @GetMapping(path = "/getMemberCountTeamHierarchy/{parentId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<Map<String, Long>> getMemberCountTeamHierarchy(@PathVariable Long parentId) throws Exception{
+        Map<String, Long> objectListMap = this.teamService.getMemberCountTeamHierarchy(parentId);
+        return new ResponseEntity<>(objectListMap, HttpStatus.OK);
+    }
     @GetMapping(path = "/getMembersCount", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<MembersTeamCountResource>> getMembersCount() throws Exception{
         List<MembersTeamCountResource>  list = this.teamService.getMembersCount();
