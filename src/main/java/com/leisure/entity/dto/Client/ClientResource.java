@@ -20,6 +20,6 @@ public class ClientResource {
     private String date_created;
     private String pictureProfile;
     private Boolean isActive;
-    private Status status;
+    private Long statusId;
     private Bank bank;
 }
