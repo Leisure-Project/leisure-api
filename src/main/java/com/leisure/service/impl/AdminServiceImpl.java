@@ -4,10 +4,12 @@ import com.leisure.config.exception.ResourceNotFoundException;
 import com.leisure.entity.Admin;
 import com.leisure.entity.Client;
 import com.leisure.entity.Status;
+import com.leisure.entity.Team;
 import com.leisure.entity.enumeration.StatusName;
 import com.leisure.repository.AdminRepository;
 import com.leisure.repository.ClientRepository;
 import com.leisure.repository.StatusRepository;
+import com.leisure.repository.TeamRepository;
 import com.leisure.service.AdminService;
 import com.leisure.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,8 @@ public class AdminServiceImpl implements AdminService {
     private ClientRepository clientRepository;
     @Autowired
     private AuthService authService;
+    @Autowired
+    private TeamRepository teamRepository;
 
     @Override
     public Admin save(Admin admin) throws Exception {
@@ -79,13 +83,19 @@ public class AdminServiceImpl implements AdminService {
             throw new ResourceNotFoundException("CLIENTE", clientId);
         }
         Client client = optionalClient.get();
+        Optional<Team> team = this.teamRepository.getTeamByChildId(clientId);
+        Team t = null;
+        if(team.isPresent()) t = team.get();
         List<Status> status = this.statusRepository.findAll();
         if(StatusName.ACTIVO.equals(client.getStatus().getName())){
             client.setStatus(status.stream().filter(x -> x.getName().equals(StatusName.INACTIVO)).findFirst().get());
+            if (t!=null) t.setIsActive(false);
         } else {
             client.setStatus(status.stream().filter(x -> x.getName().equals(StatusName.ACTIVO)).findFirst().get());
+            if (t!=null) t.setIsActive(true);
         }
         this.clientRepository.save(client);
+        if(t!=null) this.teamRepository.save(t);
 
         return String.format("Se cambió el estado del cliente con DNI %s a %s", client.getDni(), client.getStatus().getName());
     }
