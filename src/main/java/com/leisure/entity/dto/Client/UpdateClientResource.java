@@ -11,6 +11,8 @@ public class UpdateClientResource {
     private String email;
     private String phoneNumber;
     private String cci;
+    private String bankAccount;
+    private String dir;
     private String dni;
     private Bank bank;
 }

@@ -110,7 +110,9 @@ public class ClientServiceImpl implements ClientService {
         clientUpdate.setPhoneNumber(client.getPhoneNumber());
         clientUpdate.setDni(client.getDni());
         clientUpdate.setCci(client.getCci());
+        clientUpdate.setBankAccount(client.getBankAccount());
         clientUpdate.setBank(client.getBank());
+        clientUpdate.setDir(client.getDir());
         return this.clientRepository.save(clientUpdate);
     }
 

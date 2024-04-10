@@ -34,6 +34,10 @@ public class User {
     private String phoneNumber;
     @Column(name = "cci")
     private String cci;
+    @Column(name = "bank_account")
+    private String bankAccount;
+    @Column(name = "dir")
+    private String dir;
     @Column(name = "date_created")
     private String date_created;
     @Column(name = "picture_profile")

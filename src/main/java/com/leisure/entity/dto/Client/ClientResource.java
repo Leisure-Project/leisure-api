@@ -15,6 +15,9 @@ public class ClientResource {
     private String lastname;
     private String dni;
     private String email;
+    private String cci;
+    private String dir;
+    private String bankAccount;
     private String phoneNumber;
     private Date activatedDate;
     private String date_created;
