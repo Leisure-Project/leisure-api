@@ -2,6 +2,7 @@ package com.leisure.service.impl;
 
 import com.leisure.config.exception.ResourceNotFoundException;
 import com.leisure.entity.Client;
+import com.leisure.entity.Status;
 import com.leisure.entity.Team;
 import com.leisure.entity.dto.Team.MembersTeamCountResource;
 import com.leisure.entity.dto.Team.TeamResource;
@@ -155,11 +156,12 @@ public class TeamServiceImpl implements TeamService {
         if(!parentUserInTeam){
             throw new RuntimeException(String.format("El usuario %d no es parent de ningun equipo.", parentId));
         }
+        String statusName = this.clientRepository.findById(parentId).get().getStatus().getName().name();
         Integer maxLevel = 9;
         Integer level = 0;
-        long totalMembers = 0;
-        long totalMembersActive = 0;
-        long totalMembersInactive = 0;
+        long totalMembers = 1;
+        long totalMembersActive = statusName.equals("ACTIVO") ? 1 : 0;
+        long totalMembersInactive = statusName.equals("INACTIVO") ? 1 : 0;
         List<Long> currentParents = new ArrayList<>();
         Map<String, Long> clients = new HashMap<>();
         level++;
