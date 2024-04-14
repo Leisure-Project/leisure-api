@@ -12,6 +12,7 @@ import java.util.Date;
 public class ClientResource {
     private Long id;
     private String name;
+    private Integer bonus;
     private String lastname;
     private String dni;
     private String email;

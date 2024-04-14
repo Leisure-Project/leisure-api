@@ -16,6 +16,8 @@ import java.util.Date;
 public class Client extends User{
     @Column(name = "activated_date")
     private Date activatedDate;
+    @Column(name = "bonus")
+    private Integer bonus;
     @ManyToOne(targetEntity = Status.class)
     @JoinColumn(name = "status_id")
     private Status status;

@@ -14,4 +14,5 @@ public interface ClientService {
     String resetClients() throws Exception;
     List<String> verifyClientsStatus() throws Exception;
     List<String>  calculateEarnings() throws Exception;
+    String updateBonus() throws Exception;
 }

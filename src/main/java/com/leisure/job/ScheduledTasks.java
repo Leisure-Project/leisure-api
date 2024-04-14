@@ -52,4 +52,16 @@ public class ScheduledTasks {
             logger.error("Error al verificar estado de clientes. " + e.getMessage());
         }
     }
+
+    @Async
+    @Scheduled(cron = "* */60 * * * *")
+    public void updateUserBonus() {
+        try {
+            logger.error("Inicio de actualización de bonus de clientes");
+            String message = this.clientService.updateBonus();
+            logger.error("Fin de actualización de bonus de clientes");
+        } catch (Exception e) {
+            logger.error("Error al actualizar bonus de clientes. " + e.getMessage());
+        }
+    }
 }

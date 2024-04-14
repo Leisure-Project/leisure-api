@@ -36,6 +36,8 @@ public class ClientServiceImpl implements ClientService {
     @Autowired
     private TeamRepository teamRepository;
     @Autowired
+    private TeamServiceImpl teamService;
+    @Autowired
     private SalesRepository salesRepository;
     @Autowired
     private EmailServiceImpl emailService;
@@ -263,10 +265,33 @@ public class ClientServiceImpl implements ClientService {
         return messages;
     }
 
+    @Override
+    public String updateBonus() throws Exception {
+        List<Client> clientList = this.clientRepository.findAll();
+        List<Client> lst = clientList.stream().map(x -> {
+            if(this.teamRepository.existsByParentId(x.getId())){
+                try {
+                    x.setBonus(this.getBonus(x.getId()));
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                x.setBonus(0);
+            }
+            return x;
+        }).collect(Collectors.toList());
+        this.clientRepository.saveAll(lst);
+        return "Bono actualizado";
+    }
+
     public Map<Object, List<Team>> groupResultByParentId(List<Team> teamList){
         return teamList.stream()
                     .sorted((f1, f2) -> ((Date)f1.getCreated_date()).compareTo(f2.getCreated_date()))
                     .collect(Collectors.groupingBy(team -> team.getParentId()));
+    }
+    public  Integer getBonus(Long userId) throws Exception{
+        Map<String, Long> lst = this.teamService.getMemberCountTeamHierarchy(userId);
+        return lst.get("totalMembersActive").intValue() * 3;
     }
 }
 

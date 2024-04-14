@@ -96,6 +96,11 @@ public class ClientRest {
         List<String>  messageList = this.clientService.calculateEarnings();
         return new ResponseEntity<>(messageList, HttpStatus.OK);
     }
+    @PostMapping(path = "/updateBonus")
+    public ResponseEntity<String> updateBonus() throws Exception {
+        return new ResponseEntity<>(this.clientService.updateBonus(), HttpStatus.OK);
+    }
+
 
     private Boolean validate(Long clientId) {
         Boolean e = false;
