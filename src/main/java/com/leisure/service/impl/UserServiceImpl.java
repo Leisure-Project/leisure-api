@@ -5,6 +5,7 @@ import com.leisure.entity.User;
 import com.leisure.repository.UserRepository;
 import com.leisure.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,8 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
     @Override
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -49,13 +52,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String changeUserPassword(String password, Long userId) {
+    public String changeUserPassword(String oldPassword, String newPassword, Long userId) {
         Optional<User> optionalUser = this.userRepository.findById(userId);
         if(optionalUser.isEmpty()){
             throw new ResourceNotFoundException("Usuario", userId);
         }
         User user = optionalUser.get();
-        user.setPassword(password);
+        String nPassword = passwordEncoder.encode(newPassword);
+        if(!passwordEncoder.matches(oldPassword, user.getPassword())) throw new RuntimeException("Ingresa correctamente tu contraseña antigua");
+        user.setPassword(nPassword);
         this.userRepository.save(user);
         return "Se actualizó correctamente la contraseña";
     }

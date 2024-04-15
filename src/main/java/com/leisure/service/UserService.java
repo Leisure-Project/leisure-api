@@ -10,5 +10,5 @@ public interface UserService {
     List<User> getAllUsers();
     Optional<User> getUserByDni(String dni);
     String changeUserEmail(String email, Long userId);
-    String changeUserPassword(String password, Long userId);
+    String changeUserPassword(String oldPassword, String newPassword, Long userId);
 }

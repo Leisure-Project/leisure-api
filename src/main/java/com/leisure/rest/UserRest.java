@@ -33,10 +33,12 @@ public class UserRest {
         String message = this.userService.changeUserEmail(email, userId);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
-    @PostMapping(path = "/changePassword/{password}/{userId}")
-    public ResponseEntity<String> changePassword(@PathVariable String password, @PathVariable Long userId) throws Exception{
+    @PostMapping(path = "/changePassword/{oldPassword}/{newPassword}/{userId}")
+    public ResponseEntity<String> changePassword(@PathVariable String oldPassword,
+                                                 @PathVariable String newPassword,
+                                                 @PathVariable Long userId) throws Exception{
         this.validate(userId);
-        String message = this.userService.changeUserPassword(password, userId);
+        String message = this.userService.changeUserPassword(oldPassword, newPassword, userId);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
     private Boolean validate(Long clientId) {
