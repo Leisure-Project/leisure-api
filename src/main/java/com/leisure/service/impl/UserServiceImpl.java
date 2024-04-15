@@ -60,6 +60,7 @@ public class UserServiceImpl implements UserService {
         User user = optionalUser.get();
         String nPassword = passwordEncoder.encode(newPassword);
         if(!passwordEncoder.matches(oldPassword, user.getPassword())) throw new RuntimeException("Ingresa correctamente tu contraseña antigua");
+        if(passwordEncoder.matches(newPassword, user.getPassword())) throw new RuntimeException("Ingresa una contraseña diferente a la anterior");
         user.setPassword(nPassword);
         this.userRepository.save(user);
         return "Se actualizó correctamente la contraseña";
