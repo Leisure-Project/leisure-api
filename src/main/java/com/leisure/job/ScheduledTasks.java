@@ -42,7 +42,7 @@ public class ScheduledTasks {
         }
     }
     @Async
-    @Scheduled(cron = "* */60 * * * *")
+    @Scheduled(cron = "* */60 1-20 * * *")
     public void verifyClientsStatus() {
         try {
             logger.error("Inicio de verificacion de estado de clientes");
@@ -54,7 +54,7 @@ public class ScheduledTasks {
     }
 
     @Async
-    @Scheduled(cron = "* */60 * * * *")
+    @Scheduled(cron = "* */15 * * * *")
     public void updateUserBonus() {
         try {
             logger.error("Inicio de actualización de bonus de clientes");

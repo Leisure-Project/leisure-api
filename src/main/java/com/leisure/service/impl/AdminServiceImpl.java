@@ -91,6 +91,7 @@ public class AdminServiceImpl implements AdminService {
             client.setStatus(status.stream().filter(x -> x.getName().equals(StatusName.INACTIVO)).findFirst().get());
             if (t!=null) t.setIsActive(false);
         } else {
+            if(client.getBonus().equals(0)) client.setBonus(3);
             client.setStatus(status.stream().filter(x -> x.getName().equals(StatusName.ACTIVO)).findFirst().get());
             if (t!=null) t.setIsActive(true);
         }

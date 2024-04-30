@@ -52,6 +52,8 @@ public class ClientServiceImpl implements ClientService {
             throw new ResourceNotFoundException("Status", statusId);
         }
         client.setStatus(status.get());
+        client.setIsActive(false);
+        client.setBonus(0);
         logger.error("n" + client);
         Boolean existsUser = this.clientRepository.existsByDni(client.getDni());
         Boolean existsEmail = this.clientRepository.existsByEmail(client.getEmail());
