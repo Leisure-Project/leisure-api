@@ -140,10 +140,13 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public List<Client> getAllClients() throws Exception {
-        List<Client> clientList = this.clientRepository.findAll();
-        if(clientList.isEmpty()){
+        Long clientCount = this.clientRepository.count();
+        Integer intClientCount = clientCount.intValue();
+        if(intClientCount.equals(0)){
             throw new ResourceNotFoundException("No hay ningún cliente registrado en la plataforma");
         }
+        this.updateBonus();
+        List<Client> clientList = this.clientRepository.findAll();
         return clientList;
     }
 
@@ -273,12 +276,12 @@ public class ClientServiceImpl implements ClientService {
         List<Client> lst = clientList.stream().map(x -> {
             if(this.teamRepository.existsByParentId(x.getId())){
                 try {
-                    x.setBonus(this.getBonus(x.getId()));
+                    if(StatusName.ACTIVO.equals(x.getStatus().getName())) x.setBonus(this.getBonus(x.getId()));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             } else {
-                x.setBonus(0);
+                x.setBonus(StatusName.ACTIVO.equals(x.getStatus().getName()) ? 3 : 0);
             }
             return x;
         }).collect(Collectors.toList());
