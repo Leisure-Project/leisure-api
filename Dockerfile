@@ -23,10 +23,10 @@ ARG LEISURE
 
 WORKDIR /app
 RUN mkdir ./logs
-COPY src/main/resources/keystore.p12 /app/keystore.p12
+COPY src/main/resources/old-keystore.p12 /app/keystore.p12
 COPY --from=builder /target/leisure-0.0.1-SNAPSHOT.jar .
 
-ARG PORT_APP=8080
+ARG PORT_APP=443
 ENV PORT $PORT_APP
 EXPOSE $PORT
 
