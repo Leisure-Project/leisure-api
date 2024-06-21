@@ -63,7 +63,7 @@ public class AdminRest {
     }
     @PostMapping(path = "/updateAdmin/{adminId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<AdminResource> updateAdmin(@RequestBody UpdateAdminResource resource,
-                                                       @PathVariable Long adminId) throws Exception {
+                                                     @PathVariable Long adminId) throws Exception {
         if(!this.requestUtil.isAdmin()) throw new ForbiddenAccessException();
         Admin admin = this.adminService.update(mapping.map(resource, Admin.class), adminId);
         AdminResource adminResource = mapping.map(admin, AdminResource.class);
@@ -73,6 +73,12 @@ public class AdminRest {
     public ResponseEntity<String> changeClientStatus(@PathVariable Long clientId) throws Exception {
         if(!this.requestUtil.isAdmin()) throw new ForbiddenAccessException();
         return new ResponseEntity<>(this.adminService.changeClientStatus(clientId), HttpStatus.OK);
+    }
+
+    @DeleteMapping(path = "/deleteClient/{clientId}", produces = { MediaType.TEXT_PLAIN_VALUE})
+    public ResponseEntity<String> deleteClient(@PathVariable Long clientId) throws Exception {
+        if(!this.requestUtil.isAdmin()) throw new ForbiddenAccessException();
+        return new ResponseEntity<>(this.adminService.deleteClient(clientId), HttpStatus.OK);
     }
 
 }

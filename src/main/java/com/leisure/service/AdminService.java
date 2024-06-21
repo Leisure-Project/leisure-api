@@ -12,4 +12,6 @@ public interface AdminService {
     String changeClientStatus(Long clientId);
 
     Admin getAdminByDni(String dni);
+
+    String deleteClient(Long clientId);
 }
