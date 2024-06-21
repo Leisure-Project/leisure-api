@@ -118,6 +118,8 @@ public class AdminServiceImpl implements AdminService {
         Client client = optionalClient.get();
         List<Team> team = this.teamRepository.getTeamsByParentId(clientId);
         if(team.isEmpty()) {
+            Optional<Team> tChild = this.teamRepository.getTeamByChildId(clientId);
+            if(tChild.isPresent()) this.teamRepository.deleteByChildId(clientId);
             this.clientRepository.deleteById(clientId);
             message = String.format("Cliente con dni %s ha sido eliminado.", client.getDni());
         } else {
@@ -165,6 +167,7 @@ public class AdminServiceImpl implements AdminService {
                     t.setParentId(replaceMap.get("childId"));
                 }
             }
+            this.clientRepository.deleteById(clientId);
             message = String.format("Cliente con dni %s ha sido eliminado y su equipo ha sido reemplazado.", client.getDni());
         }
         return message;

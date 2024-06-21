@@ -27,4 +27,5 @@ public interface TeamRepository extends JpaRepository<Team,Long> {
     MembersTeamCountResource getMembersCountByParentId(Long parentId);
     @Query("select count(t) from Team t where t.parentId = ?1")
     Long getMemberCountByParent(Long parentId);
+    void deleteByChildId(Long childId);
 }
