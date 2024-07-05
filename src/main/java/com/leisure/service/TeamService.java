@@ -20,4 +20,5 @@ public interface TeamService {
     MembersTeamCountResource getMembersCountByParentId(Long parentId) throws Exception;
 
     Map<String, Long> getMemberCountTeamHierarchy(Long parentId) throws Exception;
+    void removeDuplicates() throws Exception;
 }

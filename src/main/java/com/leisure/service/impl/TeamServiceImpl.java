@@ -200,6 +200,13 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    public void removeDuplicates() throws Exception {
+        List<Team> teamList = this.teamRepository.getAllTeamsDuplicates();
+        if(!teamList.isEmpty()){
+            this.teamRepository.deleteAll(teamList);
+        }
+    }
+    @Override
     public List<MembersTeamCountResource> getMembersCount() throws Exception {
         return this.teamRepository.getMembersCount();
     }

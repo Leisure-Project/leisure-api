@@ -246,13 +246,6 @@ public class ClientServiceImpl implements ClientService {
                 team.setParentId(replaceMap.get("childId"));
             }
         }
-        logger.error("" + teamList);
-        if(!newParents.isEmpty()){
-            newParents.stream().forEach(x -> {
-                Optional<Team> dTeam = this.teamRepository.getOptTeamByParentIdAndChildId(x, x);
-                if(dTeam.isPresent()) this.teamRepository.deleteById(dTeam.get().getId());
-            });
-        }
         return messageList;
     }
 

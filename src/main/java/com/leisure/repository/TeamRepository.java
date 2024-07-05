@@ -30,4 +30,7 @@ public interface TeamRepository extends JpaRepository<Team,Long> {
     void deleteByChildId(Long childId);
     Team getTeamByParentIdAndChildId(Long parentId, Long childId);
     Optional<Team> getOptTeamByParentIdAndChildId(Long parentId, Long childId);
+
+    @Query(value = "SELECT t FROM Team t WHERE t.parentId = t.childId")
+    List<Team> getAllTeamsDuplicates();
 }

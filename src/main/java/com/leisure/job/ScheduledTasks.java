@@ -1,6 +1,7 @@
 package com.leisure.job;
 
 import com.leisure.service.ClientService;
+import com.leisure.service.TeamService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,13 @@ import java.util.List;
 public class ScheduledTasks {
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
 
-    @Autowired
-    private ClientService clientService;
+    private final ClientService clientService;
+    private final TeamService teamService;
+
+    public ScheduledTasks(ClientService clientService, TeamService teamService) {
+        this.clientService = clientService;
+        this.teamService = teamService;
+    }
 
     @Async
     @Scheduled(cron = "00 12 2 * * ?")
@@ -47,6 +53,7 @@ public class ScheduledTasks {
         try {
             logger.error("Inicio de verificacion de estado de clientes");
             List<String> message = this.clientService.verifyClientsStatus();
+            this.teamService.removeDuplicates();
             logger.error("Fin de verificacion de estado de clientes");
         } catch (Exception e) {
             logger.error("Error al verificar estado de clientes. " + e.getMessage());

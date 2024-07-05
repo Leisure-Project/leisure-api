@@ -167,8 +167,6 @@ public class AdminServiceImpl implements AdminService {
                     t.setParentId(replaceMap.get("childId"));
                 }
             }
-            Team dTeam = this.teamRepository.getTeamByParentIdAndChildId(clientId, clientId);
-            this.teamRepository.deleteById(dTeam.getId());
             this.clientRepository.deleteById(clientId);
             message = String.format("Cliente con dni %s ha sido eliminado y su equipo ha sido reemplazado.", client.getDni());
         }
