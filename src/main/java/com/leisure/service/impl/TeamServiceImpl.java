@@ -203,7 +203,9 @@ public class TeamServiceImpl implements TeamService {
     public void removeDuplicates() throws Exception {
         List<Team> teamList = this.teamRepository.getAllTeamsDuplicates();
         if(!teamList.isEmpty()){
+            List<Long> childsId = teamList.stream().map(Team::getChildId).collect(Collectors.toList());
             this.teamRepository.deleteAll(teamList);
+            this.teamRepository.deleteAllByChildId(childsId);
         }
     }
     @Override
