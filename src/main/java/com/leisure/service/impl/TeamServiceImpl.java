@@ -205,7 +205,7 @@ public class TeamServiceImpl implements TeamService {
         if(!teamList.isEmpty()){
             List<Long> childsId = teamList.stream().map(Team::getChildId).collect(Collectors.toList());
             this.teamRepository.deleteAll(teamList);
-            this.teamRepository.deleteAllByChildId(childsId);
+            this.teamRepository.deleteAllByChildIdIn(childsId);
         }
     }
     @Override
