@@ -117,6 +117,7 @@ public class AdminServiceImpl implements AdminService {
         }
         Client client = optionalClient.get();
         List<Team> team = this.teamRepository.getTeamsByParentId(clientId);
+
         if(team.isEmpty()) {
             Optional<Team> tChild = this.teamRepository.getTeamByChildId(clientId);
             if(tChild.isPresent()) this.teamRepository.deleteByChildId(clientId);
@@ -124,6 +125,7 @@ public class AdminServiceImpl implements AdminService {
             message = String.format("Cliente con dni %s ha sido eliminado.", client.getDni());
         } else {
             Long parentId = client.getId();
+
             // List<Long> parentsIdList = clientsInactive.stream().map(x -> x.getId()).collect(Collectors.toList());
             // List<Team> teamList = this.teamRepository.getAllTeamByParentIdList(parentsIdList);
             Map<Object, List<Team>> teamMap = this.groupResultByParentId(team);
@@ -153,21 +155,38 @@ public class AdminServiceImpl implements AdminService {
             }).collect(Collectors.toList());
             Map<Long, Map<String, Long>> resultMap = new HashMap<>();
 
-            for (int i = 0; i < parentIdWithTeam.size(); i++) {
-                Long parentIdWt = parentIdWithTeam.get(i);
-                Long childId = newParents.get(i);
+            if(newParents.isEmpty()){
+                Optional<Team> teamChild = this.teamRepository.getTeamByChildId(clientId);
+                Team tChild = teamChild.get();
                 Map<String, Long> childMap = new HashMap<>();
-                childMap.put("parentId", parentIdWt);
-                childMap.put("childId", childId);
-                resultMap.put(parentIdWt, childMap);
-            }
-            for (Team t : team) {
-                Map<String, Long> replaceMap = resultMap.get(t.getParentId());
-                if (replaceMap != null) {
-                    t.setParentId(replaceMap.get("childId"));
+                childMap.put("parentId", tChild.getParentId());
+                childMap.put("childId", team.get(0).getChildId());
+                Optional<Team> teamUpdate = this.teamRepository.getTeamByChildId(team.get(0).getChildId());
+                Team teamU = teamUpdate.get();
+                teamU.setParentId(tChild.getParentId());
+                this.teamRepository.save(teamU);
+                this.teamRepository.delete(tChild);
+                resultMap.put(tChild.getParentId(), childMap);
+
+            } else {
+                for (int i = 0; i < parentIdWithTeam.size(); i++) {
+                    Long parentIdWt = parentIdWithTeam.get(i);
+                    Long childId = newParents.get(i);//0
+                    Map<String, Long> childMap = new HashMap<>();
+                    childMap.put("parentId", parentIdWt);
+                    childMap.put("childId", childId);
+                    resultMap.put(parentIdWt, childMap);
+                }
+                for (Team t : team) {
+                    Map<String, Long> replaceMap = resultMap.get(t.getParentId());
+                    if (replaceMap != null) {
+                        t.setParentId(replaceMap.get("childId"));
+                    }
                 }
             }
+
             this.clientRepository.deleteById(clientId);
+
             message = String.format("Cliente con dni %s ha sido eliminado y su equipo ha sido reemplazado.", client.getDni());
         }
         return message;
