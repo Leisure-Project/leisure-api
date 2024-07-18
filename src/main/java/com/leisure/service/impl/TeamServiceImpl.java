@@ -110,18 +110,23 @@ public class TeamServiceImpl implements TeamService {
     }
     @Override
     public Map<Integer, List<Map<Object, List<TeamResource>>>> getTeamHierarchy(Long parentId) throws Exception {
-        Boolean parentUserInTeam = this.teamRepository.existsByParentId(parentId);
-        if(!parentUserInTeam){
-            throw new RuntimeException(String.format("El usuario %d no es parent de ningun equipo.", parentId));
-        }
+        String statusName = this.clientRepository.findById(parentId).get().getStatus().getName().name();
         Integer maxLevel = 9;
         Integer level = 0;
-        long totalMembers = 0;
-        long totalMembersActive = 0;
-        long totalMembersInactive = 0;
+        long totalMembers = 1;
+        long totalMembersActive = statusName.equals("ACTIVO") ? 1 : 0;
+        long totalMembersInactive = statusName.equals("INACTIVO") ? 1 : 0;
         List<Long> currentParents = new ArrayList<>();
-        Map<Integer, List<Map<Object, List<TeamResource>>>> clients = new HashMap<>();
+        Map<String, Long> clients = new HashMap<>();
         level++;
+        Boolean parentUserInTeam = this.teamRepository.existsByParentId(parentId);
+        if(!parentUserInTeam){
+            clients.put("totalMembers", totalMembers);
+            clients.put("totalMembersActive", totalMembersActive);
+            clients.put("totalMembersInactive", totalMembersInactive);
+            return clients;
+            //throw new RuntimeException(String.format("El usuario %d no es parent de ningun equipo.", parentId));
+        }
         while (level < maxLevel+1){
             List<Map<Object, List<TeamResource>>> maps = new ArrayList<>();
             if(level.equals(1)){
