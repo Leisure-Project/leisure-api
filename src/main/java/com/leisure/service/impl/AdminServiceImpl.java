@@ -181,6 +181,7 @@ public class AdminServiceImpl implements AdminService {
                     Map<String, Long> replaceMap = resultMap.get(t.getParentId());
                     if (replaceMap != null) {
                         t.setParentId(replaceMap.get("childId"));
+                        this.teamRepository.save(t);
                     }
                 }
             }
