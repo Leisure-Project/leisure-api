@@ -121,11 +121,7 @@ public class TeamServiceImpl implements TeamService {
         level++;
         Boolean parentUserInTeam = this.teamRepository.existsByParentId(parentId);
         if(!parentUserInTeam){
-            clients.put("totalMembers", totalMembers);
-            clients.put("totalMembersActive", totalMembersActive);
-            clients.put("totalMembersInactive", totalMembersInactive);
-            return clients;
-            //throw new RuntimeException(String.format("El usuario %d no es parent de ningun equipo.", parentId));
+            throw new RuntimeException(String.format("El usuario %d no es parent de ningun equipo.", parentId));
         }
         while (level < maxLevel+1){
             List<Map<Object, List<TeamResource>>> maps = new ArrayList<>();
@@ -157,10 +153,6 @@ public class TeamServiceImpl implements TeamService {
     }
     @Override
     public Map<String, Long> getMemberCountTeamHierarchy(Long parentId) throws Exception{
-        Boolean parentUserInTeam = this.teamRepository.existsByParentId(parentId);
-        if(!parentUserInTeam){
-            throw new RuntimeException(String.format("El usuario %d no es parent de ningun equipo.", parentId));
-        }
         String statusName = this.clientRepository.findById(parentId).get().getStatus().getName().name();
         Integer maxLevel = 9;
         Integer level = 0;
@@ -170,6 +162,14 @@ public class TeamServiceImpl implements TeamService {
         List<Long> currentParents = new ArrayList<>();
         Map<String, Long> clients = new HashMap<>();
         level++;
+        Boolean parentUserInTeam = this.teamRepository.existsByParentId(parentId);
+        if(!parentUserInTeam){
+            clients.put("totalMembers", totalMembers);
+            clients.put("totalMembersActive", totalMembersActive);
+            clients.put("totalMembersInactive", totalMembersInactive);
+            return clients;
+            //throw new RuntimeException(String.format("El usuario %d no es parent de ningun equipo.", parentId));
+        }
         while (level < maxLevel+1){
             List<Map<Object, List<TeamResource>>> maps = new ArrayList<>();
             if(level.equals(1)){
