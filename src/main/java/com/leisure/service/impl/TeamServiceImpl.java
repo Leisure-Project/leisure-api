@@ -117,7 +117,7 @@ public class TeamServiceImpl implements TeamService {
         long totalMembersActive = statusName.equals("ACTIVO") ? 1 : 0;
         long totalMembersInactive = statusName.equals("INACTIVO") ? 1 : 0;
         List<Long> currentParents = new ArrayList<>();
-        Map<String, Long> clients = new HashMap<>();
+        Map<Integer, List<Map<Object, List<TeamResource>>>> clients = new HashMap<>();
         level++;
         Boolean parentUserInTeam = this.teamRepository.existsByParentId(parentId);
         if(!parentUserInTeam){
