@@ -161,12 +161,29 @@ public class AdminServiceImpl implements AdminService {
                 Map<String, Long> childMap = new HashMap<>();
                 childMap.put("parentId", tChild.getParentId());
                 childMap.put("childId", team.get(0).getChildId());
-                Optional<Team> teamUpdate = this.teamRepository.getTeamByChildId(team.get(0).getChildId());
+                Long newParentId = null;
+                for (int i = 0; i < team.size(); i++) {
+                    Optional<Team> teamUpdate;
+                    if(i == 0){
+                        teamUpdate = this.teamRepository.getTeamByChildId(team.get(0).getChildId());
+                        Team teamU = teamUpdate.get();
+                        teamU.setParentId(tChild.getParentId());
+                        this.teamRepository.save(teamU);
+                        newParentId = teamU.getChildId();
+                        this.teamRepository.delete(tChild);
+                    } else {
+                        teamUpdate = this.teamRepository.getTeamByChildId(team.get(i).getChildId());
+                        Team teamU = teamUpdate.get();
+                        teamU.setParentId(newParentId);
+                        this.teamRepository.save(teamU);
+                    }
+                }
+/*                Optional<Team> teamUpdate = this.teamRepository.getTeamByChildId(team.get(0).getChildId());
                 Team teamU = teamUpdate.get();
                 teamU.setParentId(tChild.getParentId());
                 this.teamRepository.save(teamU);
                 this.teamRepository.delete(tChild);
-                resultMap.put(tChild.getParentId(), childMap);
+                resultMap.put(tChild.getParentId(), childMap);*/
 
             } else {
                 for (int i = 0; i < parentIdWithTeam.size(); i++) {
