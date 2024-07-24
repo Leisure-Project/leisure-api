@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -106,5 +106,112 @@ public class AdminServiceImpl implements AdminService {
         Optional<Admin> optionalAdmin = this.adminRepository.getAdminByDni(dni);
         if(optionalAdmin.isEmpty()) throw new ResourceNotFoundException("Admin", dni);
         return optionalAdmin.get();
+    }
+
+    @Override
+    public String deleteClient(Long clientId) {
+        String message = "";
+        Optional<Client> optionalClient = this.clientRepository.findById(clientId);
+        if(optionalClient.isEmpty()){
+            throw new ResourceNotFoundException("CLIENTE", clientId);
+        }
+        Client client = optionalClient.get();
+        List<Team> team = this.teamRepository.getTeamsByParentId(clientId);
+
+        if(team.isEmpty()) {
+            Optional<Team> tChild = this.teamRepository.getTeamByChildId(clientId);
+            if(tChild.isPresent()) this.teamRepository.deleteByChildId(clientId);
+            this.clientRepository.deleteById(clientId);
+            message = String.format("Cliente con dni %s ha sido eliminado.", client.getDni());
+        } else {
+            Long parentId = client.getId();
+
+            // List<Long> parentsIdList = clientsInactive.stream().map(x -> x.getId()).collect(Collectors.toList());
+            // List<Team> teamList = this.teamRepository.getAllTeamByParentIdList(parentsIdList);
+            Map<Object, List<Team>> teamMap = this.groupResultByParentId(team);
+
+            List<Long> parentIdWithTeam = new ArrayList<>();
+            parentIdWithTeam.add(parentId);
+/*            for (Long parentId : parentsIdList) {
+                if (teamMap.containsKey(parentId)) {
+                    parentIdWithTeam.add(parentId);
+                }
+            }*/
+
+            List<Team> oldMembers = teamMap.values().stream()
+                    .flatMap(List::stream)
+                    .filter(Team::getIsActive)
+                    .collect(Collectors.groupingBy(
+                            teamMapOld -> teamMapOld.getParentId(),
+                            Collectors.minBy(Comparator.comparing(teamMapOld -> teamMapOld.getCreated_date()))
+                    ))
+                    .values().stream()
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
+            List<Long> newParents = oldMembers.stream().map(x -> {
+                x.setIsActive(false);
+                this.teamRepository.save(x);
+                return x.getChildId();
+            }).collect(Collectors.toList());
+            Map<Long, Map<String, Long>> resultMap = new HashMap<>();
+
+            if(newParents.isEmpty()){
+                Optional<Team> teamChild = this.teamRepository.getTeamByChildId(clientId);
+                Team tChild = teamChild.get();
+                Map<String, Long> childMap = new HashMap<>();
+                childMap.put("parentId", tChild.getParentId());
+                childMap.put("childId", team.get(0).getChildId());
+                Long newParentId = null;
+                for (int i = 0; i < team.size(); i++) {
+                    Optional<Team> teamUpdate;
+                    if(i == 0){
+                        teamUpdate = this.teamRepository.getTeamByChildId(team.get(0).getChildId());
+                        Team teamU = teamUpdate.get();
+                        teamU.setParentId(tChild.getParentId());
+                        this.teamRepository.save(teamU);
+                        newParentId = teamU.getChildId();
+                        this.teamRepository.delete(tChild);
+                    } else {
+                        teamUpdate = this.teamRepository.getTeamByChildId(team.get(i).getChildId());
+                        Team teamU = teamUpdate.get();
+                        teamU.setParentId(newParentId);
+                        this.teamRepository.save(teamU);
+                    }
+                }
+/*                Optional<Team> teamUpdate = this.teamRepository.getTeamByChildId(team.get(0).getChildId());
+                Team teamU = teamUpdate.get();
+                teamU.setParentId(tChild.getParentId());
+                this.teamRepository.save(teamU);
+                this.teamRepository.delete(tChild);
+                resultMap.put(tChild.getParentId(), childMap);*/
+
+            } else {
+                for (int i = 0; i < parentIdWithTeam.size(); i++) {
+                    Long parentIdWt = parentIdWithTeam.get(i);
+                    Long childId = newParents.get(i);//0
+                    Map<String, Long> childMap = new HashMap<>();
+                    childMap.put("parentId", parentIdWt);
+                    childMap.put("childId", childId);
+                    resultMap.put(parentIdWt, childMap);
+                }
+                for (Team t : team) {
+                    Map<String, Long> replaceMap = resultMap.get(t.getParentId());
+                    if (replaceMap != null) {
+                        t.setParentId(replaceMap.get("childId"));
+                        this.teamRepository.save(t);
+                    }
+                }
+            }
+
+            this.clientRepository.deleteById(clientId);
+
+            message = String.format("Cliente con dni %s ha sido eliminado y su equipo ha sido reemplazado.", client.getDni());
+        }
+        return message;
+    }
+    public Map<Object, List<Team>> groupResultByParentId(List<Team> teamList){
+        return teamList.stream()
+                .sorted((f1, f2) -> ((Date)f1.getCreated_date()).compareTo(f2.getCreated_date()))
+                .collect(Collectors.groupingBy(team -> team.getParentId()));
     }
 }

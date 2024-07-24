@@ -95,7 +95,7 @@ public class ClientServiceImpl implements ClientService {
         Team team = new Team();
         team.setParentId(parentId);
         team.setChildId(newMember.getId());
-        team.setIsActive(true);
+        team.setIsActive(false);
         team.setCreated_date(createdDate);
         this.teamRepository.save(team);
         //this.emailService.sendEmail(newMember.getId(), newMember.getEmail());
@@ -246,8 +246,6 @@ public class ClientServiceImpl implements ClientService {
                 team.setParentId(replaceMap.get("childId"));
             }
         }
-        logger.error("" + teamList);
-
         return messageList;
     }
 

@@ -9,7 +9,9 @@ import com.leisure.entity.dto.Admin.CreateAdminResource;
 import com.leisure.entity.dto.Admin.UpdateAdminResource;
 import com.leisure.entity.mapping.AdminMapper;
 import com.leisure.repository.AdminRepository;
+import com.leisure.repository.TeamRepository;
 import com.leisure.service.AdminService;
+import com.leisure.service.TeamService;
 import com.leisure.util.RequestUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,16 +25,22 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/admin")
 public class AdminRest {
-    @Autowired
-    private AdminService adminService;
-    @Autowired
-    private AdminMapper mapper;
-    @Autowired
-    private ModelMapper mapping;
-    @Autowired
-    private RequestUtil requestUtil;
-    @Autowired
-    private AdminRepository adminRepository;
+    private final AdminService adminService;
+    private final AdminMapper mapper;
+    private final ModelMapper mapping;
+    private final RequestUtil requestUtil;
+    private final AdminRepository adminRepository;
+    private final TeamService teamService;
+
+    public AdminRest(AdminService adminService, AdminMapper mapper, ModelMapper mapping, RequestUtil requestUtil, AdminRepository adminRepository, TeamService teamService) {
+        this.adminService = adminService;
+        this.mapper = mapper;
+        this.mapping = mapping;
+        this.requestUtil = requestUtil;
+        this.adminRepository = adminRepository;
+        this.teamService = teamService;
+    }
+
     @PostMapping(path = "/saveAdmin", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<AdminResource> saveAdmin(@RequestBody CreateAdminResource resource) throws Exception {
         if(this.adminRepository.count() > 0 && (!this.requestUtil.isAdmin())) throw new ForbiddenAccessException();
@@ -63,7 +71,7 @@ public class AdminRest {
     }
     @PostMapping(path = "/updateAdmin/{adminId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<AdminResource> updateAdmin(@RequestBody UpdateAdminResource resource,
-                                                       @PathVariable Long adminId) throws Exception {
+                                                     @PathVariable Long adminId) throws Exception {
         if(!this.requestUtil.isAdmin()) throw new ForbiddenAccessException();
         Admin admin = this.adminService.update(mapping.map(resource, Admin.class), adminId);
         AdminResource adminResource = mapping.map(admin, AdminResource.class);
@@ -73,6 +81,14 @@ public class AdminRest {
     public ResponseEntity<String> changeClientStatus(@PathVariable Long clientId) throws Exception {
         if(!this.requestUtil.isAdmin()) throw new ForbiddenAccessException();
         return new ResponseEntity<>(this.adminService.changeClientStatus(clientId), HttpStatus.OK);
+    }
+
+    @DeleteMapping(path = "/deleteClient/{clientId}", produces = { MediaType.TEXT_PLAIN_VALUE})
+    public ResponseEntity<String> deleteClient(@PathVariable Long clientId) throws Exception {
+        if(!this.requestUtil.isAdmin()) throw new ForbiddenAccessException();
+        String message = this.adminService.deleteClient(clientId);
+        this.teamService.removeDuplicates();
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
 }
