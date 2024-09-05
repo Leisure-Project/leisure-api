@@ -101,4 +101,10 @@ public class AuthServiceImpl implements AuthService {
         User user = this.userRepository.findById(userId).get();
         return user.getRoles().stream().anyMatch(r -> r.getName().name().equals(Rolname.Role_Admin.name()));
     }
+
+    @Override
+    public Boolean isAdminByDni(String dni) {
+        User user = this.userRepository.getUserByDni(dni).get();
+        return user.getRoles().stream().anyMatch(r -> r.getName().name().equals(Rolname.Role_Admin.name()));
+    }
 }
