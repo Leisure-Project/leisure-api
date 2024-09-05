@@ -23,7 +23,12 @@ public class AuthRest {
         return new ResponseEntity<>(tokenResource, HttpStatus.OK);
     }
     @GetMapping(path = "/isAdmin/{userId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public Boolean login(@PathVariable Long userId) throws Exception{
+    public Boolean isAdminByUserId(@PathVariable Long userId) throws Exception{
         return this.authService.isAdmin(userId);
+    }
+
+    @GetMapping(path = "/isAdminByDni/{dni}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public Boolean isAdminByDni(@PathVariable String dni) throws Exception{
+        return this.authService.isAdminByDni(dni);
     }
 }

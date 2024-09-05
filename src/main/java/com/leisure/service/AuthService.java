@@ -14,4 +14,5 @@ public interface AuthService {
     TokenResource login(LoginResource loginResource) throws Exception;
 
     Boolean isAdmin(Long userId);
+    Boolean isAdminByDni(String dni);
 }
