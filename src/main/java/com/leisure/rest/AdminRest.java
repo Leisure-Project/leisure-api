@@ -7,6 +7,7 @@ import com.leisure.entity.Admin;
 import com.leisure.entity.dto.Admin.AdminResource;
 import com.leisure.entity.dto.Admin.CreateAdminResource;
 import com.leisure.entity.dto.Admin.UpdateAdminResource;
+import com.leisure.entity.dto.Client.ClientsCountResource;
 import com.leisure.entity.mapping.AdminMapper;
 import com.leisure.repository.AdminRepository;
 import com.leisure.repository.TeamRepository;
@@ -89,6 +90,13 @@ public class AdminRest {
         String message = this.adminService.deleteClient(clientId);
         this.teamService.removeDuplicates();
         return new ResponseEntity<>(message, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/getClientsCount", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<ClientsCountResource> getClientsCount() throws Exception {
+        if(!this.requestUtil.isAdmin()) throw new ForbiddenAccessException();
+        ClientsCountResource resource = this.adminService.getClientsCount();
+        return new ResponseEntity<>(resource, HttpStatus.OK);
     }
 
 }

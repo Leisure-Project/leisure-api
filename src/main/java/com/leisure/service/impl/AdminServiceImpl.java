@@ -5,6 +5,7 @@ import com.leisure.entity.Admin;
 import com.leisure.entity.Client;
 import com.leisure.entity.Status;
 import com.leisure.entity.Team;
+import com.leisure.entity.dto.Client.ClientsCountResource;
 import com.leisure.entity.enumeration.StatusName;
 import com.leisure.repository.AdminRepository;
 import com.leisure.repository.ClientRepository;
@@ -209,6 +210,12 @@ public class AdminServiceImpl implements AdminService {
         }
         return message;
     }
+
+    @Override
+    public ClientsCountResource getClientsCount() {
+        return this.clientRepository.getClientsCount();
+    }
+
     public Map<Object, List<Team>> groupResultByParentId(List<Team> teamList){
         return teamList.stream()
                 .sorted((f1, f2) -> ((Date)f1.getCreated_date()).compareTo(f2.getCreated_date()))
