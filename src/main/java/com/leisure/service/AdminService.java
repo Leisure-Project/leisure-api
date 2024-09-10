@@ -1,6 +1,7 @@
 package com.leisure.service;
 
 import com.leisure.entity.Admin;
+import com.leisure.entity.dto.Client.ClientsCountResource;
 
 import java.util.List;
 
@@ -14,4 +15,5 @@ public interface AdminService {
     Admin getAdminByDni(String dni);
 
     String deleteClient(Long clientId);
+    ClientsCountResource getClientsCount();
 }
