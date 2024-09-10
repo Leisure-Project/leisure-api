@@ -36,7 +36,7 @@ public class ScheduledTasks {
         }
     }
     @Async
-    @Scheduled(cron = "0 55 11 2 * * ?")
+    @Scheduled(cron = "0 55 11 2 * ?")
     public void calculateEarnings(){
         try {
             logger.error("Inicio de calculo de ganancias");
