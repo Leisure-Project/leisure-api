@@ -274,7 +274,7 @@ public class ClientServiceImpl implements ClientService {
         List<Client> lst = clientList.stream().map(x -> {
             if(this.teamRepository.existsByParentId(x.getId())){
                 try {
-                    if(StatusName.ACTIVO.equals(x.getStatus().getName())) x.setBonus(this.getBonus(x.getId()));
+                    x.setBonus(StatusName.ACTIVO.equals(x.getStatus().getName()) ? this.getBonus(x.getId()) : 0);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
