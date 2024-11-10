@@ -293,7 +293,7 @@ public class ClientServiceImpl implements ClientService {
                     .collect(Collectors.groupingBy(team -> team.getParentId()));
     }
     public  Integer getBonus(Long userId) throws Exception{
-        Map<String, Long> lst = this.teamService.getMemberCountTeamHierarchy(userId);
+        Map<String, Long> lst = this.teamService.getMemberCountTeamHierarchy(userId, 0);
         return lst.get("totalMembersActive").intValue() * 3;
     }
 }

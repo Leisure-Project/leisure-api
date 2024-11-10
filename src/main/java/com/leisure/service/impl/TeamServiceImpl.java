@@ -152,11 +152,11 @@ public class TeamServiceImpl implements TeamService {
     return clients;
     }
     @Override
-    public Map<String, Long> getMemberCountTeamHierarchy(Long parentId) throws Exception{
+    public Map<String, Long> getMemberCountTeamHierarchy(Long parentId, long tMembers) throws Exception{
         String statusName = this.clientRepository.findById(parentId).get().getStatus().getName().name();
         Integer maxLevel = 9;
         Integer level = 0;
-        long totalMembers = 1;
+        long totalMembers = tMembers;
         long totalMembersActive = statusName.equals("ACTIVO") ? 1 : 0;
         long totalMembersInactive = statusName.equals("INACTIVO") ? 1 : 0;
         List<Long> currentParents = new ArrayList<>();
