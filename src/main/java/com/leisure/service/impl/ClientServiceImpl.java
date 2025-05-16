@@ -7,10 +7,7 @@ import com.leisure.entity.Status;
 import com.leisure.entity.Team;
 import com.leisure.entity.dto.Team.MembersTeamCountResource;
 import com.leisure.entity.enumeration.StatusName;
-import com.leisure.repository.ClientRepository;
-import com.leisure.repository.SalesRepository;
-import com.leisure.repository.StatusRepository;
-import com.leisure.repository.TeamRepository;
+import com.leisure.repository.*;
 import com.leisure.service.ClientService;
 import com.leisure.util.Constants;
 import com.leisure.util.DateUtils;
@@ -31,6 +28,8 @@ import java.util.stream.Collectors;
 public class ClientServiceImpl implements ClientService {
     @Autowired
     private ClientRepository clientRepository;
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private StatusRepository statusRepository;
     @Autowired
@@ -55,8 +54,8 @@ public class ClientServiceImpl implements ClientService {
         client.setIsActive(false);
         client.setBonus(0);
         logger.error("n" + client);
-        Boolean existsUser = this.clientRepository.existsByDni(client.getDni());
-        Boolean existsEmail = this.clientRepository.existsByEmail(client.getEmail());
+        Boolean existsUser = this.userRepository.existsByDni(client.getDni());
+        Boolean existsEmail = this.userRepository.existsByEmail(client.getEmail());
         if(Boolean.TRUE.equals(existsUser)){
             throw new RuntimeException(String.format("Ya existe un usuario registrado con el dni %s", client.getDni()));
         } else if(Boolean.TRUE.equals(existsEmail)){
@@ -76,8 +75,8 @@ public class ClientServiceImpl implements ClientService {
             throw new ResourceNotFoundException("Status", statusId);
         }
         client.setStatus(status.get());
-        Boolean existsUser = this.clientRepository.existsByDni(client.getDni());
-        Boolean existsEmail = this.clientRepository.existsByEmail(client.getEmail());
+        Boolean existsUser = this.userRepository.existsByDni(client.getDni());
+        Boolean existsEmail = this.userRepository.existsByEmail(client.getEmail());
         if(Boolean.TRUE.equals(existsUser)){
             throw new RuntimeException(String.format("Ya existe un usuario registrado con el dni %s", client.getDni()));
         } else if(Boolean.TRUE.equals(existsEmail)){
