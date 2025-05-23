@@ -203,9 +203,9 @@ public class AdminServiceImpl implements AdminService {
                     }
                 }
             }
-
+            Optional<Team> tChild = this.teamRepository.getTeamByChildId(clientId);
+            if(tChild.isPresent()) this.teamRepository.deleteByChildId(clientId);
             this.clientRepository.deleteById(clientId);
-
             message = String.format("Cliente con dni %s ha sido eliminado y su equipo ha sido reemplazado.", client.getDni());
         }
         return message;
