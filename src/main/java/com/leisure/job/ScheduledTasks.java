@@ -24,7 +24,7 @@ public class ScheduledTasks {
     }
 
     @Async
-    @Scheduled(cron = "0 0 12 1 * ?")
+    @Scheduled(cron = "0 0 05 1 * ?")
     public void resetClients(){
         try {
             logger.error("Inicio de reseteo de clientes");
@@ -39,9 +39,9 @@ public class ScheduledTasks {
     @Scheduled(cron = "0 55 11 2 * ?")
     public void calculateEarnings(){
         try {
-            logger.error("Inicio de calculo de ganancias");
+            //logger.error("Inicio de calculo de ganancias");
             List<String> message =  this.clientService.calculateEarnings();
-            logger.error("Fin de calculo de ganancias");
+            //logger.error("Fin de calculo de ganancias");
             logger.error(String.format("%s", message));
         } catch (Exception e){
             logger.error("Error al calcular las ganancias: " + e.getMessage());
@@ -64,9 +64,9 @@ public class ScheduledTasks {
     @Scheduled(cron = "0 */15 * * * ?")
     public void updateUserBonus() {
         try {
-            logger.error("Inicio de actualización de bonus de clientes");
+            //logger.error("Inicio de actualización de bonus de clientes");
             String message = this.clientService.updateBonus();
-            logger.error("Fin de actualización de bonus de clientes");
+            //logger.error("Fin de actualización de bonus de clientes");
         } catch (Exception e) {
             logger.error("Error al actualizar bonus de clientes. " + e.getMessage());
         }
